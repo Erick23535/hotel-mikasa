@@ -1,0 +1,1054 @@
+:host {
+  --admin-bg: #f4f5f8;
+  --card-radius: 18px;
+
+  /* Glass tokens */
+  --glass-light: rgba(255, 255, 255, 0.70);
+  --glass-border-light: rgba(15, 23, 42, 0.10);
+
+  --glass-dark: rgba(17, 24, 39, 0.60);
+  --glass-border-dark: rgba(255, 255, 255, 0.10);
+}
+
+.admin-content {
+  --background: var(--admin-bg);
+}
+
+/* Fondo premium (sin tocar HTML): usa parts de ion-content */
+ion-content.admin-content::part(background) {
+  background:
+    radial-gradient(1200px 500px at 15% -10%, rgba(59, 130, 246, 0.18), transparent 60%),
+    radial-gradient(900px 450px at 90% 0%, rgba(34, 197, 94, 0.18), transparent 55%),
+    radial-gradient(800px 480px at 30% 110%, rgba(245, 158, 11, 0.16), transparent 60%),
+    linear-gradient(180deg, #f7f8fb 0%, #f4f5f8 55%, #eef1f6 100%);
+}
+
+/* ============ HEADER: híbrido iOS blur + banca dark ============ */
+.admin-header {
+  /* Header “corporativo” pero glass */
+  ion-toolbar.admin-toolbar,
+  ion-toolbar.segment-toolbar {
+    --background: rgba(11, 18, 32, 0.78);
+    --color: #fff;
+
+    backdrop-filter: saturate(180%) blur(18px);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  .admin-toolbar {
+    padding: 8px 10px;
+  }
+
+  .segment-toolbar {
+    padding: 0 0 10px;
+  }
+
+  /* Sutil glow superior */
+  ion-toolbar.admin-toolbar::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    pointer-events: none;
+  }
+}
+
+.title-wrap {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.admin-title {
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.admin-subtitle {
+  font-size: 12px;
+  opacity: 0.78;
+  padding-left: 2px;
+}
+
+.icon-btn {
+  --color: #fff;
+  --border-radius: 14px;
+}
+
+/* Segment estilo “pill” iOS */
+.admin-segment {
+  --background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 6px;
+  margin: 0 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+
+  ion-segment-button {
+    --color: rgba(255, 255, 255, 0.86);
+    --color-checked: #0b1220;
+    --indicator-color: rgba(255, 255, 255, 0.95);
+    border-radius: 14px;
+
+    ion-icon {
+      margin-bottom: 2px;
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    ion-label {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+  }
+}
+
+/* ============ Layout ============ */
+.section-wrap {
+  padding: 14px 14px 28px;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 950;
+  letter-spacing: -0.25px;
+  color: var(--ion-color-step-850, #111827);
+}
+
+.section-hint {
+  margin: 4px 0 0;
+  color: var(--ion-color-step-600, #6b7280);
+  font-size: 13px;
+}
+
+.excel-btn {
+  --border-radius: 14px;
+  font-weight: 950;
+}
+
+/* ============ Glass cards (iOS) + sombra premium (banca) ============ */
+.card-soft {
+  border-radius: var(--card-radius);
+  overflow: hidden;
+
+  background: var(--glass-light);
+  border: 1px solid var(--glass-border-light);
+
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+
+  box-shadow:
+    0 14px 40px rgba(15, 23, 42, 0.10),
+    0 1px 0 rgba(255, 255, 255, 0.35) inset;
+}
+
+/* Hover desktop (no afecta móvil) */
+@media (hover: hover) {
+  .card-soft:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 18px 48px rgba(15, 23, 42, 0.14),
+      0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  }
+}
+
+/* ============ HERO ============ */
+.hero-card {
+  border-radius: 22px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  box-shadow:
+    0 18px 55px rgba(34, 197, 94, 0.24),
+    0 1px 0 rgba(255, 255, 255, 0.24) inset;
+
+  .hero-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
+  }
+
+  .hero-label {
+    font-size: 13px;
+    opacity: 0.92;
+    font-weight: 900;
+  }
+
+  .hero-value {
+    font-size: 40px;
+    font-weight: 950;
+    letter-spacing: -1px;
+    margin-top: 6px;
+  }
+
+  .hero-meta {
+    font-size: 12px;
+    opacity: 0.88;
+    margin-top: 4px;
+  }
+
+  .hero-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.14);
+
+    ion-icon {
+      font-size: 36px;
+      opacity: 0.95;
+    }
+  }
+}
+
+/* ============ KPI ============ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.kpi-card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  .kpi-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+  }
+
+  .kpi-value {
+    font-size: 30px;
+    font-weight: 950;
+    line-height: 1;
+  }
+
+  .kpi-label {
+    margin-top: 6px;
+    font-weight: 900;
+    opacity: 0.92;
+  }
+
+  .kpi-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.18);
+
+    ion-icon {
+      font-size: 20px;
+      opacity: 0.9;
+    }
+  }
+}
+
+.kpi-warn { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+.kpi-info { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
+
+/* ============ Quick Actions ============ */
+.quick-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.quick-card {
+  .quick-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .quick-title {
+    font-weight: 950;
+    color: var(--ion-color-step-850, #111827);
+  }
+
+  .quick-sub {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--ion-color-step-600, #6b7280);
+    font-weight: 700;
+  }
+
+  .quick-pill {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 12px;
+
+    background: rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+
+    ion-icon { opacity: 0.8; }
+  }
+
+  .quick-btn {
+    --border-radius: 14px;
+    font-weight: 950;
+  }
+}
+
+.quick-card-alt {
+  .quick-pill {
+    background: rgba(59, 130, 246, 0.10);
+    border-color: rgba(59, 130, 246, 0.14);
+  }
+}
+
+/* ============ Charts ============ */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.glass-card {
+  /* ya es glass por card-soft, pero refuerza el look */
+  box-shadow:
+    0 14px 44px rgba(15, 23, 42, 0.10),
+    0 1px 0 rgba(255, 255, 255, 0.45) inset;
+}
+
+.chart-box {
+  height: 260px;
+}
+
+/* ============ Top (banca premium) ============ */
+.top-card {
+  margin-top: 12px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0b1220, #0f172a);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  box-shadow:
+    0 18px 55px rgba(15, 23, 42, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.10) inset;
+
+  .top-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .top-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 950;
+    font-size: 12px;
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.12);
+    padding: 6px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  .top-title {
+    font-size: 18px;
+    font-weight: 950;
+  }
+
+  .top-sub {
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .top-medal {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.10);
+
+    ion-icon {
+      font-size: 30px;
+      color: #fbbf24;
+    }
+  }
+}
+
+/* ============ Recepción UI ============ */
+.center-hero {
+  text-align: center;
+  margin-top: 4px;
+  margin-bottom: 12px;
+
+  .hero-circle {
+    width: 86px;
+    height: 86px;
+    border-radius: 26px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+
+    background: rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+
+    ion-icon {
+      font-size: 46px;
+      color: #0f172a;
+      opacity: 0.75;
+    }
+  }
+}
+
+.input-item {
+  --background: transparent;
+
+  ion-icon {
+    font-size: 20px;
+    opacity: 0.75;
+  }
+}
+
+.mini-btn {
+  --border-radius: 12px;
+  font-weight: 950;
+}
+
+.card-accent {
+  border-top: 4px solid var(--ion-color-primary);
+}
+
+.list-clean ion-item {
+  --background: transparent;
+}
+
+.btn-stack {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.big-btn {
+  --border-radius: 16px;
+  font-weight: 950;
+  letter-spacing: 0.4px;
+}
+
+.soft-btn {
+  margin-bottom: 14px;
+}
+
+/* Subheads */
+.subhead-row {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.subhead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 950;
+  color: var(--ion-color-step-850, #111827);
+
+  .pill {
+    background: rgba(17, 24, 39, 0.08);
+    color: var(--ion-color-step-850, #111827);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 950;
+  }
+}
+
+/* Lists */
+.list-soft {
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+}
+
+.glass-list {
+  background: var(--glass-light);
+  border: 1px solid var(--glass-border-light);
+
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.room-chip {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-weight: 950;
+  min-width: 52px;
+  text-align: center;
+}
+
+.item-title {
+  font-weight: 950;
+  color: var(--ion-color-step-850, #111827);
+}
+
+.item-sub {
+  font-size: 12px;
+  color: var(--ion-color-step-600, #6b7280);
+}
+
+.pill-btn {
+  --border-radius: 14px;
+  font-weight: 950;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 18px 0;
+  color: var(--ion-color-step-600, #6b7280);
+
+  ion-icon {
+    font-size: 34px;
+    opacity: 0.6;
+  }
+
+  p {
+    margin: 8px 0 0;
+    font-weight: 800;
+  }
+}
+
+/* Reservas */
+.search-pro {
+  --border-radius: 16px;
+  --box-shadow: none;
+}
+
+.reserva-card {
+  .reserva-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .reserva-title {
+    font-weight: 950;
+  }
+
+  .small-muted {
+    opacity: 0.7;
+    font-size: 12px;
+  }
+
+  .dot {
+    margin: 0 6px;
+    opacity: 0.5;
+  }
+
+  .status-badge {
+    font-weight: 950;
+    border-radius: 12px;
+    padding: 6px 10px;
+  }
+
+  .reserva-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    @media (min-width: 900px) {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: start;
+    }
+  }
+
+  .reserva-info {
+    display: grid;
+    gap: 8px;
+
+    .line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ion-color-step-850, #111827);
+
+      ion-icon {
+        opacity: 0.75;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .comprobante-box {
+    border-radius: 16px;
+    padding: 12px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.18);
+
+    .comprobante-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 950;
+      color: #047857;
+      margin-bottom: 10px;
+    }
+
+    .comprobante-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.12);
+    }
+
+    .comprobante-actions {
+      text-align: center;
+      margin-top: 10px;
+
+      a {
+        font-size: 12px;
+        font-weight: 950;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .comprobante-missing {
+    border-radius: 16px;
+    padding: 14px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px dashed rgba(239, 68, 68, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #b91c1c;
+    font-weight: 950;
+  }
+
+  .divider-soft {
+    height: 1px;
+    background: rgba(15, 23, 42, 0.08);
+    margin: 14px 0 12px;
+  }
+
+  .actions-row {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    --border-radius: 14px;
+    font-weight: 950;
+  }
+}
+
+/* Inventario */
+.thumb-pro {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 950;
+  color: var(--ion-color-step-850, #111827);
+}
+
+.off-badge {
+  border-radius: 12px;
+  font-weight: 950;
+}
+
+.room-sub {
+  font-size: 12px;
+  color: var(--ion-color-step-600, #6b7280);
+  margin-top: 2px;
+}
+
+.price-row {
+  margin-top: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.price-old {
+  text-decoration: line-through;
+  color: #b91c1c;
+  font-weight: 900;
+  opacity: 0.8;
+}
+
+.price-now {
+  color: #16a34a;
+  font-weight: 950;
+  font-size: 16px;
+}
+
+.icon-round {
+  --border-radius: 16px;
+}
+
+/* Marketing */
+.ticket-card {
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.16);
+}
+
+.upper-input {
+  text-transform: uppercase;
+}
+
+.coupon-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+.coupon-code {
+  font-weight: 950;
+  color: var(--ion-color-step-850, #111827);
+}
+
+.coupon-sub {
+  font-size: 12px;
+  color: var(--ion-color-step-600, #6b7280);
+}
+
+/* Forms */
+.form-card {
+  margin-top: 12px;
+}
+
+.form-item {
+  --background: transparent;
+  margin-bottom: 8px;
+
+  ion-label {
+    font-weight: 900;
+  }
+}
+
+.muted { color: rgba(255, 255, 255, 0.75); }
+.center { text-align: center; }
+
+/* Micro-animaciones elegantes (con fallback) */
+@keyframes popIn {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.card-soft, .hero-card, .kpi-card, .top-card {
+  animation: popIn .22s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-soft, .hero-card, .kpi-card, .top-card { animation: none; }
+  .card-soft:hover { transform: none; }
+}
+
+/* ============ Dark mode: banca full premium ============ */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --admin-bg: #0b1220;
+  }
+
+  ion-content.admin-content::part(background) {
+    background:
+      radial-gradient(1200px 520px at 20% -10%, rgba(59, 130, 246, 0.22), transparent 60%),
+      radial-gradient(900px 520px at 90% 0%, rgba(34, 197, 94, 0.18), transparent 55%),
+      radial-gradient(900px 520px at 40% 110%, rgba(245, 158, 11, 0.14), transparent 60%),
+      linear-gradient(180deg, #0b1220 0%, #0b1220 45%, #08101d 100%);
+  }
+
+  .section-title { color: #f3f4f6; }
+  .section-hint { color: rgba(243, 244, 246, 0.72); }
+
+  /* Glass oscuro */
+  .card-soft,
+  .glass-list {
+    background: var(--glass-dark);
+    border-color: var(--glass-border-dark);
+    box-shadow:
+      0 18px 55px rgba(0, 0, 0, 0.40),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  }
+
+  .room-title, .item-title, .coupon-code, .quick-title { color: #f3f4f6; }
+  .room-sub, .item-sub, .coupon-sub, .quick-sub { color: rgba(243, 244, 246, 0.70); }
+
+  .quick-card .quick-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(243, 244, 246, 0.90);
+  }
+
+  .divider-soft {
+    background: rgba(255, 255, 255, 0.10) !important;
+  }
+}
+/* ===================== FINAL 5% — Apple / Banca polish ===================== */
+
+/* Tipografía + render “premium” */
+:host {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* micro-tokens */
+  --card-radius: 20px; /* un pelín más “Apple” */
+  --hairline-light: rgba(15, 23, 42, 0.08);
+  --hairline-dark: rgba(255, 255, 255, 0.10);
+
+  --shadow-premium:
+    0 20px 70px rgba(15, 23, 42, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.40) inset;
+
+  --shadow-premium-dark:
+    0 22px 75px rgba(0, 0, 0, 0.52),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+/* ===== Safe-area iOS (sin romper Android/Web) ===== */
+.admin-header ion-toolbar.admin-toolbar {
+  padding-top: calc(8px + env(safe-area-inset-top));
+  padding-left: max(10px, env(safe-area-inset-left));
+  padding-right: max(10px, env(safe-area-inset-right));
+}
+
+.admin-header ion-toolbar.segment-toolbar {
+  padding-left: max(10px, env(safe-area-inset-left));
+  padding-right: max(10px, env(safe-area-inset-right));
+}
+
+/* ===== Header: más “glass” real + separadores finos ===== */
+.admin-header {
+  ion-toolbar.admin-toolbar,
+  ion-toolbar.segment-toolbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* halo superior ultra sutil (nivel banca) */
+  ion-toolbar.admin-toolbar::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+    pointer-events: none;
+    opacity: .9;
+  }
+}
+
+/* ===== Segment: interacción más iOS (press/hover/checked) ===== */
+.admin-segment ion-segment-button {
+  /* si Ionic ignora alguna variable, no pasa nada */
+  --background: transparent;
+  --background-hover: rgba(255, 255, 255, 0.06);
+  --background-checked: rgba(255, 255, 255, 0.92);
+  --indicator-height: 100%;
+  --indicator-box-shadow: 0 10px 26px rgba(0,0,0,.20);
+  --border-radius: 14px;
+
+  transition: transform .12s ease, filter .12s ease;
+}
+
+.admin-segment ion-segment-button:active {
+  transform: scale(0.985);
+  filter: brightness(1.02);
+}
+
+/* ===== Cards: sombra “real” + micro brillo interno ===== */
+.card-soft {
+  box-shadow: var(--shadow-premium) !important;
+  position: relative;
+}
+
+/* micro “noise” elegante (sin imágenes, sin romper nada) */
+.card-soft::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.12) 0px,
+      rgba(255,255,255,0.12) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+  mix-blend-mode: overlay;
+}
+
+/* ===== Botones: tactilidad Apple (sin tocar lógica) ===== */
+.big-btn,
+.quick-btn,
+.action-btn,
+.mini-btn,
+.icon-round,
+.icon-btn {
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+}
+
+.big-btn:active,
+.quick-btn:active,
+.action-btn:active,
+.mini-btn:active,
+.icon-round:active,
+.icon-btn:active {
+  transform: translateY(1px) scale(0.99);
+  filter: brightness(0.98);
+}
+
+/* foco accesible (teclado/desktop) */
+.big-btn:focus-visible,
+.quick-btn:focus-visible,
+.action-btn:focus-visible,
+.mini-btn:focus-visible,
+.icon-btn:focus-visible,
+ion-searchbar.search-pro:focus-within {
+  outline: 2px solid rgba(59, 130, 246, 0.65);
+  outline-offset: 3px;
+  border-radius: 16px;
+}
+
+/* ===== Lists: hairlines tipo iOS (súper fino) ===== */
+.list-soft ion-item {
+  --inner-border-width: 0;
+  --border-width: 0;
+  --highlight-color-focused: rgba(59, 130, 246, 0.35);
+}
+
+.list-soft ion-item::part(native) {
+  /* separador fino sin usar lines */
+  border-bottom: 1px solid var(--hairline-light);
+}
+
+.list-soft ion-item:last-child::part(native) {
+  border-bottom: 0;
+}
+
+/* ===== Searchbar: glass más limpio ===== */
+.search-pro {
+  --background: rgba(255,255,255,0.70);
+  --placeholder-color: rgba(17, 24, 39, 0.45);
+  --icon-color: rgba(17, 24, 39, 0.45);
+  --color: rgba(17, 24, 39, 0.92);
+  --border-radius: 18px;
+  --box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+/* ===== Imágenes: borde premium + “depth” ===== */
+.comprobante-img,
+.thumb-img {
+  border: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+/* ===== Backdrop fallback (si el device no soporta blur) ===== */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card-soft,
+  .glass-list,
+  .admin-header ion-toolbar.admin-toolbar,
+  .admin-header ion-toolbar.segment-toolbar,
+  .admin-segment {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .card-soft { background: rgba(255,255,255,0.94) !important; }
+  .admin-header ion-toolbar.admin-toolbar,
+  .admin-header ion-toolbar.segment-toolbar { --background: #0b1220 !important; }
+}
+
+/* ===================== DARK: banca REAL (contraste + sombras finas) ===================== */
+@media (prefers-color-scheme: dark) {
+  .card-soft {
+    box-shadow: var(--shadow-premium-dark) !important;
+  }
+
+  .list-soft ion-item::part(native) {
+    border-bottom: 1px solid var(--hairline-dark);
+  }
+
+  .search-pro {
+    --background: rgba(17, 24, 39, 0.66);
+    --placeholder-color: rgba(243, 244, 246, 0.45);
+    --icon-color: rgba(243, 244, 246, 0.45);
+    --color: rgba(243, 244, 246, 0.92);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.40);
+  }
+
+  .comprobante-img,
+  .thumb-img {
+    border-color: rgba(255, 255, 255, 0.10);
+  }
+}

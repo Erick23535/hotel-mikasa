@@ -1,0 +1,155 @@
+<ion-header class="pf-header ion-no-border" [translucent]="true">
+  <ion-toolbar class="pf-toolbar">
+    <ion-buttons slot="start">
+      <ion-button class="icon-btn" (click)="irAlHome()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Mi Perfil</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-chip class="role-chip" *ngIf="usuario?.rol">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <ion-label>{{ usuario.rol | uppercase }}</ion-label>
+      </ion-chip>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pf-content">
+
+  <!-- Fondo decorativo -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- HERO PERFIL -->
+    <section class="hero-card">
+      <div class="hero-left">
+        <div class="avatar-wrap">
+          <div class="avatar-ring"></div>
+          <div class="avatar">
+            <span class="avatar-initials">{{ getInitials(usuario?.nombre) }}</span>
+          </div>
+        </div>
+
+        <div class="hero-info">
+          <div class="hero-name">{{ usuario?.nombre || 'Usuario' }}</div>
+          <div class="hero-email">
+            <ion-icon name="mail-outline"></ion-icon>
+            <span>{{ usuario?.email || '—' }}</span>
+          </div>
+
+          <div class="hero-pills">
+            <div class="pill soft">
+              <ion-icon name="key-outline"></ion-icon>
+              <span>ID: #{{ usuario?.id || '—' }}</span>
+            </div>
+
+            <div class="pill ok" *ngIf="usuario?.rol">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>Cuenta verificada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="mini-kpi">
+          <div class="kpi-label">Acceso</div>
+          <div class="kpi-value">{{ usuario?.rol ? (usuario.rol | uppercase) : '—' }}</div>
+        </div>
+
+        <div class="mini-kpi">
+          <div class="kpi-label">Estado</div>
+          <div class="kpi-value success">Activo</div>
+        </div>
+      </div>
+
+      <div class="hero-grad"></div>
+    </section>
+
+    <!-- TARJETA CUENTA -->
+    <ion-card class="glass-card">
+      <ion-card-content>
+        <div class="card-head">
+          <div class="card-title">Datos de la cuenta</div>
+          <div class="card-sub">Información principal del usuario</div>
+        </div>
+
+        <ion-list class="pf-list">
+          <ion-item class="pf-item" lines="none">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Correo</h3>
+              <p>{{ usuario?.email || '—' }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item class="pf-item" lines="none">
+            <ion-icon name="key-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>ID de Usuario</h3>
+              <p>#{{ usuario?.id || '—' }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item class="pf-item" lines="none">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Rol</h3>
+              <p>{{ usuario?.rol ? (usuario.rol | uppercase) : '—' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- TARJETA SEGURIDAD -->
+    <ion-card class="glass-card">
+      <ion-card-content>
+        <div class="card-head">
+          <div class="card-title">Seguridad</div>
+          <div class="card-sub">Protección y control de sesión</div>
+        </div>
+
+        <div class="secure-row">
+          <div class="secure-ico">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+          </div>
+          <div class="secure-text">
+            <div class="secure-title">Sesión protegida</div>
+            <div class="secure-sub">Tu información se mantiene privada en este dispositivo.</div>
+          </div>
+        </div>
+
+        <div class="secure-row subtle">
+          <div class="secure-ico">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="secure-text">
+            <div class="secure-title">Acceso seguro</div>
+            <div class="secure-sub">Cierra sesión si estás en un equipo compartido.</div>
+          </div>
+        </div>
+
+        <ion-button class="logout-btn" expand="block" color="danger" fill="outline" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          Cerrar sesión
+        </ion-button>
+
+        <div class="app-foot">
+          <span>Hotel MI KASA</span>
+          <span class="dot">•</span>
+          <span>App {{ appVersion }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="safe-space"></div>
+  </div>
+
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "hotel-mikasa",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

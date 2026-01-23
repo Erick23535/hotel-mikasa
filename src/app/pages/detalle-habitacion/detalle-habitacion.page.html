@@ -1,0 +1,337 @@
+<ion-header class="detail-header ion-no-border" [translucent]="true" *ngIf="habitacion">
+  <ion-toolbar class="detail-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Detalle</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!usuario" class="pill-login" routerLink="/login" fill="solid">
+        Ingresar
+        <ion-icon name="log-in-outline" slot="end"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="detail-content" *ngIf="habitacion">
+
+  <!-- Fondo decorativo -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-img">
+        <img [src]="habitacion.imagen_url" alt="Habitación" />
+
+        <div class="hero-gradient"></div>
+
+        <div class="hero-top">
+          <div class="hero-chip">
+            <ion-icon name="bed-outline"></ion-icon>
+            Hab. {{ habitacion.numero }}
+          </div>
+
+          <div class="hero-discount" *ngIf="habitacion.descuento > 0">
+            -{{ habitacion.descuento }}%
+          </div>
+        </div>
+
+        <div class="hero-bottom">
+          <div class="hero-title">{{ habitacion.tipo }}</div>
+          <div class="hero-sub">{{ habitacion.descripcion }}</div>
+
+          <div class="hero-price">
+            <span *ngIf="habitacion.descuento > 0" class="old">
+              ${{ habitacion.precio }}
+            </span>
+
+            <span class="now">
+              ${{ habitacion.precio - (habitacion.precio * habitacion.descuento / 100) | number:'1.0-0' }}
+            </span>
+
+            <span class="suffix">/ noche</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVITADO -->
+    <div class="guest-banner" *ngIf="!usuario">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <div class="guest-text">
+        Estás en modo invitado. Puedes ver detalles.
+        <b>Para reservar u opinar</b>, inicia sesión.
+      </div>
+      <ion-button class="guest-btn" size="small" routerLink="/login">
+        Ingresar
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- FECHAS -->
+    <ion-card class="glass-card">
+      <ion-card-content>
+
+        <div class="card-head">
+          <div class="card-title">Fechas de viaje</div>
+          <div class="card-sub">Selecciona tu check-in y check-out</div>
+        </div>
+<ion-item>
+  <ion-label>Adultos</ion-label>
+  <ion-select [(ngModel)]="adultos">
+    <ion-select-option *ngFor="let n of [1,2,3,4,5,6]" [value]="n">{{n}}</ion-select-option>
+  </ion-select>
+</ion-item>
+
+<ion-item>
+  <ion-label>Niños</ion-label>
+  <ion-select [(ngModel)]="ninos">
+    <ion-select-option *ngFor="let n of [0,1,2,3,4]" [value]="n">{{n}}</ion-select-option>
+  </ion-select>
+</ion-item>
+
+<!-- opcional visual -->
+<ion-note *ngIf="habitacion?.max_personas">
+  Capacidad: {{habitacion.max_personas}} huéspedes (Adultos: {{habitacion.max_adultos}}, Niños: {{habitacion.max_ninos}})
+</ion-note>
+
+        <div class="date-grid">
+          <ion-item class="field-item" lines="none">
+            <ion-icon name="log-in-outline" slot="start"></ion-icon>
+            <ion-label position="stacked">Llegada</ion-label>
+            <ion-input type="date" [(ngModel)]="fechaInicio" (ionChange)="calcularTotal()"></ion-input>
+          </ion-item>
+
+          <ion-item class="field-item" lines="none">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            <ion-label position="stacked">Salida</ion-label>
+            <ion-input type="date" [(ngModel)]="fechaFin" (ionChange)="calcularTotal()"></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="mini-info" *ngIf="diasEstadia > 0">
+          <ion-icon name="moon-outline"></ion-icon>
+          {{ diasEstadia }} noche(s)
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- EXTRAS -->
+    <ion-card class="glass-card">
+      <ion-card-content>
+
+        <div class="card-head">
+          <div class="card-title">Personaliza tu estancia</div>
+          <div class="card-sub">Mejora tu experiencia (opcional)</div>
+        </div>
+
+        <div class="extra-list">
+
+          <div class="extra-item">
+            <div class="extra-ico warn">
+              <ion-icon name="restaurant-outline"></ion-icon>
+            </div>
+
+            <div class="extra-text">
+              <div class="extra-title">Desayuno buffet</div>
+              <div class="extra-sub">+$10 por noche</div>
+            </div>
+
+            <ion-toggle [(ngModel)]="extras.desayuno" (ionChange)="calcularTotal()"></ion-toggle>
+          </div>
+
+          <div class="extra-item">
+            <div class="extra-ico danger">
+              <ion-icon name="rose-outline"></ion-icon>
+            </div>
+
+            <div class="extra-text">
+              <div class="extra-title">Decoración romántica</div>
+              <div class="extra-sub">+$30 pago único</div>
+            </div>
+
+            <ion-toggle [(ngModel)]="extras.decoracion" (ionChange)="calcularTotal()"></ion-toggle>
+          </div>
+
+          <div class="extra-item">
+            <div class="extra-ico info">
+              <ion-icon name="paw-outline"></ion-icon>
+            </div>
+
+            <div class="extra-text">
+              <div class="extra-title">Mascota</div>
+              <div class="extra-sub">+$20 limpieza</div>
+            </div>
+
+            <ion-toggle [(ngModel)]="extras.mascota" (ionChange)="calcularTotal()"></ion-toggle>
+          </div>
+
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- CUPÓN -->
+    <ion-card class="glass-card">
+      <ion-card-content>
+
+        <div class="card-head">
+          <div class="card-title">Cupón</div>
+          <div class="card-sub">Si tienes un código, aplícalo aquí</div>
+        </div>
+
+        <!-- Sin cupón aplicado -->
+        <div class="coupon-box" *ngIf="descuentoAplicado === 0">
+          <ion-item class="coupon-item" lines="none">
+            <ion-icon name="pricetag-outline" slot="start"></ion-icon>
+            <ion-input
+              placeholder="CÓDIGO (ej: MIKASA10)"
+              [(ngModel)]="codigoCupon"
+              (ionInput)="codigoCupon = (codigoCupon || '').toUpperCase()"
+            ></ion-input>
+
+            <ion-button class="coupon-btn" size="small" (click)="aplicarCupon()">
+              Aplicar
+            </ion-button>
+          </ion-item>
+
+          <div class="coupon-msg" *ngIf="mensajeCupon" [class.ok]="colorMensajeCupon==='success'" [class.bad]="colorMensajeCupon==='danger'">
+            <ion-icon [name]="colorMensajeCupon==='success' ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+            <span>{{ mensajeCupon }}</span>
+          </div>
+        </div>
+
+        <!-- Cupón aplicado -->
+        <div class="coupon-applied" *ngIf="descuentoAplicado > 0">
+          <div class="applied-left">
+            <div class="applied-ico">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </div>
+            <div>
+              <div class="applied-title">Cupón aplicado</div>
+              <div class="applied-sub">{{ descuentoAplicado }}% OFF</div>
+            </div>
+          </div>
+
+          <ion-button fill="clear" class="remove-btn" (click)="descuentoAplicado = 0; calcularTotal()">
+            Quitar
+            <ion-icon name="close-circle-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- COMENTARIOS -->
+    <ion-card class="glass-card">
+      <ion-card-content>
+
+        <div class="card-head reviews-head">
+          <div>
+            <div class="card-title">Opiniones</div>
+            <div class="card-sub">
+              <ion-icon name="star" class="star"></ion-icon>
+              {{ promedio }} / 5 • {{ totalReviews }} reseña(s)
+            </div>
+          </div>
+
+          <div class="rating-pill">
+            <ion-icon name="sparkles-outline"></ion-icon>
+            Top
+          </div>
+        </div>
+
+        <ion-list class="reviews-list">
+          <ion-item class="review-item" *ngFor="let c of comentarios" lines="none">
+            <ion-avatar slot="start">
+              <div class="avatar-fallback">
+                {{ c.nombre?.charAt(0) || 'U' }}
+              </div>
+            </ion-avatar>
+
+            <ion-label class="ion-text-wrap">
+              <div class="review-name">{{ c.nombre }}</div>
+              <div class="review-stars">
+                <ion-icon *ngFor="let i of [1,2,3,4,5]"
+                          [name]="i <= c.calificacion ? 'star' : 'star-outline'"></ion-icon>
+                <span class="review-date">{{ c.fecha | date:'shortDate' }}</span>
+              </div>
+              <div class="review-msg">{{ c.mensaje }}</div>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <!-- Dejar reseña -->
+        <div class="review-compose">
+          <div class="compose-title">Deja tu opinión</div>
+          <div class="compose-stars">
+            <ion-icon *ngFor="let i of [1,2,3,4,5]"
+                      [name]="i <= nuevaResena.calificacion ? 'star' : 'star-outline'"
+                      (click)="setEstrellas(i)"></ion-icon>
+          </div>
+
+          <ion-item class="compose-box" lines="none">
+            <ion-textarea
+              placeholder="Escribe tu experiencia..."
+              [(ngModel)]="nuevaResena.mensaje"
+            ></ion-textarea>
+          </ion-item>
+
+          <ion-button class="primary-btn" expand="block" (click)="enviarOpinion()">
+            Publicar opinión
+            <ion-icon name="send-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="secure-foot">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          Pago y datos protegidos
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Espacio para el sticky bar -->
+    <div class="bottom-space"></div>
+
+  </div>
+
+  <!-- STICKY BAR tipo Apple Pay -->
+  <div class="sticky-bar">
+
+    <div class="sticky-left">
+      <div class="sticky-top">
+        Total
+        <span *ngIf="diasEstadia > 0" class="sticky-nights">• {{ diasEstadia }} noche(s)</span>
+      </div>
+
+      <div class="sticky-total">
+        <span *ngIf="descuentoAplicado > 0" class="sticky-old">${{ precioSinDescuento | number:'1.2-2' }}</span>
+        <span class="sticky-now">${{ totalPagar | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="sticky-breakdown" *ngIf="diasEstadia > 0">
+        Hospedaje: ${{ precioHabitacionTotal | number:'1.2-2' }}
+        <span *ngIf="costoExtras > 0"> • Extras: ${{ costoExtras | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <ion-button
+      class="sticky-btn"
+      (click)="reservar()"
+      [disabled]="totalPagar <= 0"
+    >
+      Reservar
+      <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+    </ion-button>
+
+  </div>
+
+</ion-content>

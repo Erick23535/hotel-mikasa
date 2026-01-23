@@ -1,0 +1,323 @@
+<ion-header class="mr-header ion-no-border" [translucent]="true">
+  <ion-toolbar class="mr-toolbar">
+    <ion-buttons slot="start">
+      <ion-button class="icon-btn" (click)="volver()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Mis Estancias</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-chip class="user-chip" *ngIf="usuario?.nombre">
+        <ion-icon name="person-circle-outline"></ion-icon>
+        <ion-label>{{ usuario?.nombre }}</ion-label>
+      </ion-chip>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="mr-content">
+<!-- ✅ Pull to refresh -->
+<ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+  <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent"></ion-refresher-content>
+</ion-refresher>
+
+<!-- ✅ Loading skeleton (solo cuando no hay data todavía) -->
+<div class="page-wrap" *ngIf="loading && reservas.length === 0">
+  <section class="top-card">
+    <div class="top-left">
+      <ion-skeleton-text animated style="width: 180px; height: 16px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 260px; height: 12px; margin-top: 10px;"></ion-skeleton-text>
+    </div>
+    <div class="top-right">
+      <div class="kpi">
+        <ion-skeleton-text animated style="width: 45px; height: 12px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 35px; height: 18px; margin-top: 8px;"></ion-skeleton-text>
+      </div>
+    </div>
+  </section>
+
+  <section class="list" style="margin-top:14px;">
+    <article class="res-card" *ngFor="let _ of [1,2,3]">
+      <div class="card-hero">
+        <ion-skeleton-text animated style="width:100%; height:190px;"></ion-skeleton-text>
+      </div>
+      <div class="card-body">
+        <ion-skeleton-text animated style="width: 60%; height: 14px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 90%; height: 12px; margin-top: 8px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 44px; margin-top: 12px; border-radius: 18px;"></ion-skeleton-text>
+      </div>
+    </article>
+  </section>
+</div>
+
+  <!-- Fondo decorativo -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- Encabezado tipo “banca” -->
+    <section class="top-card">
+      <div class="top-left">
+        <div class="top-title">Historial de Reservas</div>
+        <div class="top-sub">Tus comprobantes, pases y estado en un solo lugar</div>
+      </div>
+
+      <div class="top-right">
+        <div class="kpi">
+          <div class="kpi-label">Total</div>
+          <div class="kpi-value">{{ reservas?.length || 0 }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ✅ Filtro tipo Booking/Airbnb (chips) -->
+    <div class="filter-row" *ngIf="reservas.length > 0">
+
+      <ion-chip class="fchip"
+                [class.active]="filtroEstado==='todas'"
+                (click)="setFiltroEstado('todas')">
+        <ion-label>Todas</ion-label>
+        <ion-badge>{{ reservas?.length || 0 }}</ion-badge>
+      </ion-chip>
+
+      <ion-chip class="fchip"
+                [class.active]="filtroEstado==='pendiente'"
+                (click)="setFiltroEstado('pendiente')">
+        <ion-label>Pendiente</ion-label>
+        <ion-badge color="warning">{{ countPendientes }}</ion-badge>
+      </ion-chip>
+
+      <ion-chip class="fchip"
+                [class.active]="filtroEstado==='confirmada'"
+                (click)="setFiltroEstado('confirmada')">
+        <ion-label>Confirmada</ion-label>
+        <ion-badge color="success">{{ countConfirmadas }}</ion-badge>
+      </ion-chip>
+
+    </div>
+
+    <!-- Empty state premium (sin reservas reales) -->
+    <div *ngIf="reservas.length === 0" class="empty">
+      <div class="empty-ico">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <div class="empty-title">Aún no tienes reservas</div>
+      <div class="empty-sub">Explora habitaciones y reserva en segundos.</div>
+
+      <ion-button routerLink="/home" class="primary-cta" expand="block">
+        Explorar habitaciones
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- ✅ Empty por filtro (hay reservas, pero ese estado no tiene resultados) -->
+    <div *ngIf="reservas.length > 0 && reservasFiltradas.length === 0" class="empty filter-empty">
+      <div class="empty-ico">
+        <ion-icon name="funnel-outline"></ion-icon>
+      </div>
+
+      <div class="empty-title">Sin resultados</div>
+      <div class="empty-sub">
+        No tienes reservas en estado <b>{{ filtroEstado | uppercase }}</b>.
+      </div>
+
+      <ion-button class="primary-cta" expand="block" (click)="setFiltroEstado('todas')">
+        Ver todas
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Cards -->
+    <section class="list" *ngIf="reservasFiltradas.length > 0">
+
+      <article class="res-card" *ngFor="let r of reservasFiltradas">
+
+        <!-- HERO mini -->
+        <div class="card-hero">
+          <img class="hero-img" [src]="r.imagen_url" alt="Habitación" loading="lazy" />
+
+          <div class="hero-overlay"></div>
+
+          <div class="hero-top">
+            <div class="hero-type">{{ r.tipo }}</div>
+
+            <span
+              class="status-pill"
+              [class.pendiente]="r.estado == 'pendiente'"
+              [class.confirmada]="r.estado == 'confirmada'"
+              [class.cancelada]="r.estado != 'pendiente' && r.estado != 'confirmada'">
+              <ion-icon
+                [name]="r.estado == 'pendiente' ? 'time-outline' : (r.estado == 'confirmada' ? 'checkmark-circle-outline' : 'close-circle-outline')">
+              </ion-icon>
+              {{ r.estado | uppercase }}
+            </span>
+          </div>
+
+          <div class="hero-bottom">
+            <div class="price-row">
+              <div class="price-label">Total</div>
+              <div class="price-value">${{ r.total | number:'1.2-2' }}</div>
+            </div>
+
+            <div class="date-row">
+              <div class="date-chip">
+                <ion-icon name="log-in-outline"></ion-icon>
+                <span>{{ r.fecha_checkin }}</span>
+              </div>
+
+              <div class="date-chip">
+                <ion-icon name="log-out-outline"></ion-icon>
+                <span>{{ r.fecha_checkout }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="card-body">
+
+          <!-- PENDIENTE SIN COMPROBANTE -->
+          <div *ngIf="!r.comprobante_url && r.estado == 'pendiente'" class="action-box warn">
+            <div class="action-left">
+              <div class="action-ico">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+              </div>
+              <div>
+                <div class="action-title">Pago pendiente</div>
+                <div class="action-sub">Sube tu comprobante para revisión</div>
+              </div>
+            </div>
+
+            <input type="file"
+                   (change)="seleccionarArchivo($event, r.id)"
+                   id="file-{{r.id}}"
+                   style="display:none" />
+
+            <ion-button class="btn-outline" expand="block" (click)="abrirSelector(r.id)">
+              <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+              Subir comprobante
+            </ion-button>
+          </div>
+
+          <!-- PENDIENTE CON COMPROBANTE -->
+          <div *ngIf="r.comprobante_url && r.estado == 'pendiente'" class="action-box ok">
+            <div class="action-left">
+              <div class="action-ico">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+              </div>
+              <div>
+                <div class="action-title">Comprobante enviado</div>
+                <div class="action-sub">En espera de aprobación</div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <ion-button class="btn-ghost" fill="clear" [href]="r.comprobante_url" target="_blank">
+                Ver foto
+                <ion-icon name="open-outline" slot="end"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+
+          <!-- CONFIRMADA -->
+          <div *ngIf="r.estado == 'confirmada'" class="action-box solid">
+            <div class="action-left">
+              <div class="action-ico">
+                <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+              </div>
+              <div>
+                <div class="action-title">Reserva lista</div>
+                <div class="action-sub">Accede a tu pase digital o descarga el PDF</div>
+              </div>
+            </div>
+
+            <div class="btn-row grid">
+              <ion-button class="btn-dark" expand="block" (click)="abrirPase(r)">
+                <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+                Pase digital
+              </ion-button>
+
+              <ion-button class="btn-outline" expand="block" (click)="generarPDF(r)">
+                <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                PDF
+              </ion-button>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <div class="safe-space"></div>
+    </section>
+  </div>
+
+  <!-- MODAL QR estilo Apple Wallet -->
+  <ion-modal class="qr-modal" [isOpen]="mostrarModalQR" (didDismiss)="cerrarPase()">
+    <ng-template>
+      <div class="qr-backdrop" (click)="cerrarPase()"></div>
+
+      <div class="qr-sheet" (click)="$event.stopPropagation()">
+
+        <div class="qr-head">
+          <div class="qr-title">Pase de Huésped</div>
+          <div class="qr-sub">Presenta este código en recepción</div>
+
+          <ion-button fill="clear" class="close-x" (click)="cerrarPase()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="qr-body">
+          <div class="qr-user">
+            <div class="qr-avatar">
+              <ion-icon name="person-outline"></ion-icon>
+            </div>
+            <div class="qr-user-info">
+              <div class="qr-name">{{ usuario?.nombre || 'Huésped' }}</div>
+              <div class="qr-meta">Reserva #{{ reservaSeleccionadaQR?.id }}</div>
+            </div>
+
+            <span class="qr-status">
+              Confirmado
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </span>
+          </div>
+
+          <div class="qr-box">
+            <img [src]="qrImage" alt="QR" />
+          </div>
+
+          <div class="qr-info">
+            <div class="info-row">
+              <span>Habitación</span>
+              <b>{{ reservaSeleccionadaQR?.habitacion || reservaSeleccionadaQR?.tipo }}</b>
+            </div>
+            <div class="info-row">
+              <span>Entrada</span>
+              <b>{{ reservaSeleccionadaQR?.fecha_checkin }}</b>
+            </div>
+            <div class="info-row">
+              <span>Salida</span>
+              <b>{{ reservaSeleccionadaQR?.fecha_checkout }}</b>
+            </div>
+          </div>
+
+          <ion-button class="primary-cta" expand="block" (click)="cerrarPase()">
+            Cerrar pase
+          </ion-button>
+
+          <div class="qr-foot">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            Acceso seguro • Hotel Mi Kasa
+          </div>
+        </div>
+
+      </div>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

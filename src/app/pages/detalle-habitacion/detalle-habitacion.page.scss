@@ -1,0 +1,817 @@
+:host {
+  --bg: #f4f5f8;
+  --text: #0f172a;
+  --muted: rgba(15, 23, 42, 0.62);
+
+  /* ✅ Booking-like brand */
+  --brand: #003580;        /* booking blue */
+  --brand-2: #0071c2;      /* lighter blue */
+  --accent: #febb02;       /* booking yellow */
+  --success: #16a34a;
+  --danger: #ef4444;
+
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(15, 23, 42, 0.10);
+
+  --radius-xl: 26px;
+  --radius-lg: 18px;
+
+  --shadow:
+    0 20px 70px rgba(15, 23, 42, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.40) inset;
+
+  --shadow-soft:
+    0 14px 40px rgba(15, 23, 42, 0.10),
+    0 1px 0 rgba(255, 255, 255, 0.55) inset;
+}
+
+ion-content.detail-content {
+  --background: var(--bg);
+}
+
+/* Fondo premium */
+ion-content.detail-content::part(background) {
+  background:
+    radial-gradient(1100px 520px at 18% -10%, rgba(0, 113, 194, 0.18), transparent 60%),
+    radial-gradient(950px 520px at 92% 0%, rgba(34, 197, 94, 0.14), transparent 58%),
+    radial-gradient(900px 520px at 40% 110%, rgba(254, 187, 2, 0.14), transparent 62%),
+    linear-gradient(180deg, #f8fafc 0%, #f4f5f8 60%, #eef2f7 100%);
+}
+
+/* Orbs animados */
+.bg-orb {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 999px;
+  filter: blur(28px);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: floaty 8s ease-in-out infinite;
+}
+.orb-1 { top: -90px; left: -90px; background: rgba(0, 113, 194, 0.35); }
+.orb-2 { top: 140px; right: -100px; background: rgba(34, 197, 94, 0.26); animation-delay: 1.2s; }
+.orb-3 { bottom: -140px; left: 18%; background: rgba(254, 187, 2, 0.22); animation-delay: 2.1s; }
+
+@keyframes floaty {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(0,-10px,0) scale(1.02); }
+}
+
+.page-wrap {
+  padding: 14px 14px calc(24px + env(safe-area-inset-bottom));
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* Header premium */
+.detail-header {
+  .detail-toolbar {
+    --background: rgba(11, 18, 32, 0.78);
+    --color: #fff;
+
+    backdrop-filter: saturate(180%) blur(18px);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  ion-title { font-weight: 950; letter-spacing: -0.2px; }
+
+  /* Back button más “Booking” */
+  ion-back-button {
+    --color: #fff;
+    --icon-font-size: 22px;
+  }
+
+  .pill-login {
+    --border-radius: 999px;
+    --background: var(--brand-2);
+    --color: #fff;
+    --background-activated: rgba(0, 113, 194, 0.88);
+    font-weight: 950;
+    height: 34px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    box-shadow:
+      0 14px 36px rgba(0, 113, 194, 0.22),
+      0 1px 0 rgba(255, 255, 255, 0.12) inset;
+  }
+}
+
+/* Glass card (más clean tipo Booking) */
+.glass-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+
+  box-shadow: var(--shadow-soft);
+  margin: 12px 0;
+
+  ion-card-content { padding: 16px; }
+}
+
+.card-head { margin-bottom: 12px; }
+
+.card-title {
+  font-size: 16px;
+  font-weight: 950;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.card-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.56);
+
+  .star { margin-right: 6px; color: var(--accent); }
+}
+
+/* HERO */
+.hero-img {
+  position: relative;
+  height: 280px;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow:
+    0 22px 70px rgba(15, 23, 42, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.18) inset;
+
+  animation: enterUp .35s ease-out both;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.02);
+  }
+
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.72) 100%);
+    pointer-events: none;
+  }
+
+  .hero-top {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 2;
+  }
+
+  .hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.22);
+    color: #fff;
+    font-weight: 950;
+    font-size: 12px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .hero-discount {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(239, 68, 68, 0.92);
+    border: 1px solid rgba(255,255,255,0.22);
+    color: #fff;
+    font-weight: 950;
+    font-size: 12px;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.25);
+  }
+
+  .hero-bottom {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+    z-index: 2;
+  }
+
+  .hero-title {
+    font-size: 20px;
+    font-weight: 950;
+    color: #fff;
+    letter-spacing: -0.4px;
+    text-shadow: 0 10px 25px rgba(0,0,0,0.28);
+  }
+
+  .hero-sub {
+    margin-top: 6px;
+    color: rgba(255,255,255,0.86);
+    font-weight: 750;
+    font-size: 12px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hero-price {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+
+    .old {
+      text-decoration: line-through;
+      color: rgba(255,255,255,0.72);
+      font-weight: 850;
+      font-size: 12px;
+    }
+
+    .now {
+      color: rgba(34, 197, 94, 0.98);
+      font-weight: 950;
+      font-size: 22px;
+      letter-spacing: -0.2px;
+    }
+
+    .suffix {
+      color: rgba(255,255,255,0.72);
+      font-weight: 800;
+      font-size: 12px;
+    }
+  }
+}
+
+@keyframes enterUp {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Invitado */
+.guest-banner {
+  margin-top: 12px;
+  border-radius: 18px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  align-items: center;
+  gap: 10px;
+
+  background: rgba(254, 187, 2, 0.16);
+  border: 1px solid rgba(254, 187, 2, 0.26);
+  color: rgba(15, 23, 42, 0.88);
+
+  ion-icon { font-size: 18px; opacity: 0.9; }
+}
+
+.guest-text {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.guest-btn {
+  --border-radius: 999px;
+  --background: var(--brand-2);
+  --color: #fff;
+  font-weight: 950;
+}
+
+/* ✅ Booking-like guests selector */
+.grid-guests{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 380px){
+  .grid-guests{ grid-template-columns: 1fr; }
+}
+
+.guest-item{
+  border-radius: 18px;
+  overflow: hidden;
+
+  --background: transparent;
+  --padding-start: 12px;
+  --inner-padding-end: 10px;
+}
+
+.guest-item::part(native){
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+.guest-item ion-label{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.70);
+}
+
+.guest-item ion-select{
+  width: 100%;
+  max-width: 100%;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+/* ion-note capacidad */
+ion-note{
+  display: block;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px dashed rgba(0, 113, 194, 0.28);
+  background: rgba(0, 113, 194, 0.06);
+  color: rgba(15, 23, 42, 0.78);
+  font-weight: 850;
+  font-size: 12px;
+}
+
+/* Fechas */
+.date-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 12px;
+
+  @media (min-width: 520px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field-item {
+  --background: transparent;
+  --padding-start: 12px;
+  --inner-padding-end: 10px;
+
+  ion-icon { opacity: 0.7; }
+}
+
+.field-item::part(native) {
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+.field-item ion-label {
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.70);
+}
+
+.field-item ion-input {
+  font-weight: 850;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.mini-info {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 113, 194, 0.10);
+  border: 1px solid rgba(0, 113, 194, 0.14);
+  color: rgba(15, 23, 42, 0.86);
+  font-weight: 950;
+  font-size: 12px;
+}
+
+/* Extras */
+.extra-list { display: grid; gap: 10px; }
+
+.extra-item {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 12px;
+  align-items: center;
+
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.extra-ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.04);
+
+  ion-icon { font-size: 22px; }
+
+  &.warn { background: rgba(254, 187, 2, 0.18); border-color: rgba(254, 187, 2, 0.30); color: #b45309; }
+  &.danger { background: rgba(239, 68, 68, 0.10); border-color: rgba(239, 68, 68, 0.18); color: #ef4444; }
+  &.info { background: rgba(0, 113, 194, 0.14); border-color: rgba(0, 113, 194, 0.22); color: var(--brand-2); }
+}
+
+.extra-title { font-weight: 950; color: rgba(15, 23, 42, 0.92); }
+.extra-sub { margin-top: 2px; font-size: 12px; font-weight: 800; color: rgba(15, 23, 42, 0.56); }
+
+ion-toggle {
+  --handle-width: 22px;
+  --handle-height: 22px;
+  --track-height: 30px;
+  --track-width: 54px;
+
+  /* un toque más “Booking” */
+  --track-background: rgba(15, 23, 42, 0.14);
+  --track-background-checked: rgba(0, 113, 194, 0.35);
+  --handle-background: #fff;
+  --handle-background-checked: #fff;
+}
+
+/* Cupón */
+.coupon-box { margin-top: 4px; }
+
+.coupon-item {
+  --background: transparent;
+  --padding-start: 12px;
+  --inner-padding-end: 10px;
+}
+
+.coupon-item::part(native) {
+  border-radius: 18px;
+  border: 1px dashed rgba(0, 113, 194, 0.34);
+  background: rgba(0, 113, 194, 0.06);
+}
+
+.coupon-btn {
+  --border-radius: 999px;
+  --background: var(--brand-2);
+  --color: #fff;
+  font-weight: 950;
+}
+
+.coupon-msg {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255,255,255,0.55);
+
+  &.ok { border-color: rgba(34, 197, 94, 0.18); background: rgba(34, 197, 94, 0.10); color: #16a34a; }
+  &.bad { border-color: rgba(239, 68, 68, 0.18); background: rgba(239, 68, 68, 0.10); color: #ef4444; }
+}
+
+.coupon-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  background: rgba(34, 197, 94, 0.10);
+}
+
+.applied-left { display: flex; align-items: center; gap: 10px; }
+
+.applied-ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(34, 197, 94, 0.18);
+  color: #16a34a;
+
+  ion-icon { font-size: 24px; }
+}
+
+.applied-title { font-weight: 950; color: rgba(15,23,42,0.92); }
+.applied-sub { font-weight: 900; color: rgba(15,23,42,0.62); font-size: 12px; }
+
+.remove-btn {
+  --border-radius: 999px;
+  --color: rgba(15,23,42,0.85);
+  font-weight: 950;
+}
+
+/* Reviews */
+.reviews-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  font-weight: 950;
+  color: rgba(15, 23, 42, 0.75);
+  font-size: 12px;
+}
+
+.reviews-list { background: transparent; margin-top: 8px; }
+
+.review-item {
+  --background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  margin-bottom: 10px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(0, 113, 194, 0.12);
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  color: rgba(15, 23, 42, 0.75);
+}
+
+.review-name { font-weight: 950; color: rgba(15, 23, 42, 0.92); }
+
+.review-stars {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  ion-icon { color: var(--accent); font-size: 14px; }
+}
+
+.review-date {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 850;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.review-msg {
+  margin-top: 6px;
+  font-weight: 750;
+  color: rgba(15, 23, 42, 0.70);
+  font-size: 13px;
+}
+
+/* Compose */
+.review-compose {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.18);
+}
+
+.compose-title { font-weight: 950; color: rgba(15, 23, 42, 0.92); }
+
+.compose-stars {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+
+  ion-icon {
+    font-size: 34px;
+    color: var(--accent);
+    transition: transform .12s ease, filter .12s ease;
+  }
+
+  ion-icon:active {
+    transform: scale(0.96);
+    filter: brightness(0.95);
+  }
+}
+
+.compose-box { margin-top: 10px; --background: transparent; }
+
+.compose-box::part(native) {
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+.primary-btn {
+  margin-top: 12px;
+  --border-radius: 18px;
+  --background: var(--brand-2);
+  --color: #fff;
+  --background-activated: rgba(0, 113, 194, 0.88);
+  font-weight: 950;
+  height: 46px;
+  box-shadow:
+    0 18px 45px rgba(0, 113, 194, 0.20),
+    0 1px 0 rgba(255, 255, 255, 0.14) inset;
+}
+
+.secure-foot {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Sticky bar */
+.bottom-space { height: 98px; }
+
+.sticky-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  /* ✅ Más Booking: fondo claro + borde (no rompe nada) */
+  background: rgba(255, 255, 255, 0.86);
+  border-top: 1px solid rgba(15, 23, 42, 0.10);
+
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  z-index: 999;
+
+  box-shadow: 0 -18px 60px rgba(15, 23, 42, 0.12);
+}
+
+.sticky-left { min-width: 0; }
+
+.sticky-top {
+  color: rgba(15, 23, 42, 0.70);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.sticky-nights { opacity: 0.85; }
+
+.sticky-total {
+  margin-top: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sticky-old {
+  text-decoration: line-through;
+  color: rgba(15, 23, 42, 0.45);
+  font-weight: 850;
+  font-size: 12px;
+}
+
+.sticky-now {
+  color: var(--success);
+  font-weight: 950;
+  font-size: 20px;
+  letter-spacing: -0.2px;
+}
+
+.sticky-breakdown {
+  margin-top: 4px;
+  color: rgba(15, 23, 42, 0.62);
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.sticky-btn {
+  --border-radius: 999px;
+  --background: var(--brand);
+  --color: #fff;
+  --background-activated: rgba(0, 53, 128, 0.90);
+  font-weight: 950;
+  height: 44px;
+  box-shadow:
+    0 16px 44px rgba(0, 53, 128, 0.20),
+    0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+
+/* En pantallas grandes: bar centrada estilo “floating” sin romper mobile */
+@media (min-width: 920px) {
+  .sticky-bar {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(880px, calc(100% - 28px));
+    border-radius: 18px;
+    bottom: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+  }
+  .bottom-space { height: 120px; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .bg-orb { animation: none !important; }
+  .hero-img { animation: none !important; }
+}
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --bg: #0b1220;
+    --text: #f3f4f6;
+    --muted: rgba(243, 244, 246, 0.70);
+
+    --glass: rgba(17, 24, 39, 0.60);
+    --glass-border: rgba(255, 255, 255, 0.10);
+
+    --shadow:
+      0 22px 75px rgba(0, 0, 0, 0.52),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+
+    --shadow-soft:
+      0 18px 60px rgba(0, 0, 0, 0.45),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  }
+
+  ion-content.detail-content::part(background) {
+    background:
+      radial-gradient(1200px 560px at 20% -10%, rgba(0, 113, 194, 0.22), transparent 60%),
+      radial-gradient(900px 560px at 90% 0%, rgba(34, 197, 94, 0.16), transparent 58%),
+      radial-gradient(900px 560px at 40% 110%, rgba(254, 187, 2, 0.12), transparent 62%),
+      linear-gradient(180deg, #0b1220 0%, #0b1220 55%, #08101d 100%);
+  }
+
+  .field-item::part(native),
+  .compose-box::part(native),
+  .guest-item::part(native) {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+  }
+
+  ion-note{
+    background: rgba(0, 113, 194, 0.10);
+    border-color: rgba(0, 113, 194, 0.22);
+    color: rgba(243, 244, 246, 0.72);
+  }
+
+  .extra-item,
+  .review-item {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+  }
+
+  .extra-title,
+  .review-name,
+  .applied-title { color: rgba(243, 244, 246, 0.92); }
+
+  .extra-sub,
+  .review-msg,
+  .card-sub,
+  .review-date,
+  .applied-sub,
+  .secure-foot { color: rgba(243, 244, 246, 0.62); }
+
+  .rating-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(243, 244, 246, 0.85);
+  }
+
+  /* Sticky bar dark */
+  .sticky-bar {
+    background: rgba(11, 18, 32, 0.78);
+    border-top-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.45);
+  }
+
+  .sticky-top { color: rgba(255, 255, 255, 0.78); }
+  .sticky-old { color: rgba(255, 255, 255, 0.55); }
+  .sticky-breakdown { color: rgba(255, 255, 255, 0.70); }
+}

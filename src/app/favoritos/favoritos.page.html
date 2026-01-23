@@ -1,0 +1,133 @@
+<ion-header class="fav-header ion-no-border" [translucent]="true">
+  <ion-toolbar class="fav-toolbar">
+    <ion-buttons slot="start">
+      <ion-button class="icon-btn" (click)="volver()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Favoritos</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-chip class="user-chip" *ngIf="usuario?.nombre">
+        <ion-icon name="person-circle-outline"></ion-icon>
+        <ion-label>{{ usuario?.nombre }}</ion-label>
+      </ion-chip>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="fav-content">
+
+  <!-- Fondo decorativo -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Pull to refresh (pro) -->
+  <ion-refresher slot="fixed" (ionRefresh)="cargarFavoritos($event)">
+    <ion-refresher-content pullingIcon="chevron-down-circle-outline"></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-wrap">
+
+    <!-- Top card tipo banca -->
+    <section class="top-card">
+      <div class="top-left">
+        <div class="top-title">Tus habitaciones guardadas</div>
+        <div class="top-sub">Acceso rápido a tus preferidas</div>
+      </div>
+
+      <div class="top-right">
+        <div class="kpi">
+          <div class="kpi-label">Total</div>
+          <div class="kpi-value">{{ favoritos?.length || 0 }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skeleton loading -->
+    <section class="list" *ngIf="cargando">
+      <article class="fav-card skeleton" *ngFor="let x of [1,2,3]">
+        <div class="sk-img"></div>
+        <div class="sk-body">
+          <div class="sk-line w60"></div>
+          <div class="sk-line w90"></div>
+          <div class="sk-line w40"></div>
+          <div class="sk-btn"></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Empty state -->
+    <div *ngIf="!cargando && favoritos.length === 0" class="empty">
+      <div class="empty-ico">
+        <ion-icon name="heart-outline"></ion-icon>
+      </div>
+      <div class="empty-title">Aún no tienes favoritos</div>
+      <div class="empty-sub">Guarda habitaciones tocando el corazón ❤️</div>
+
+      <ion-button routerLink="/home" class="primary-cta" expand="block">
+        Explorar habitaciones
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Grid favoritos (similar a Home) -->
+    <div class="rooms-grid" *ngIf="!cargando && favoritos.length > 0">
+
+      <ion-card class="room-card" *ngFor="let h of favoritos">
+
+        <div class="img-wrap">
+          <img [src]="h.imagen_url" alt="Habitación {{h.numero}}" loading="lazy">
+
+          <div class="img-gradient"></div>
+
+          <div class="top-badges">
+            <div class="room-no">
+              Hab. {{ h.numero }}
+            </div>
+
+            <div class="off-badge" *ngIf="h.descuento > 0">
+              -{{ h.descuento }}%
+            </div>
+          </div>
+
+          <!-- Botón corazón (quitar) -->
+          <button class="fav-btn" (click)="quitarDeFavoritos(h)" aria-label="Quitar de favoritos">
+            <ion-icon name="heart"></ion-icon>
+          </button>
+        </div>
+
+        <ion-card-content class="room-body">
+          <div class="room-type">{{ h.tipo }}</div>
+          <div class="room-desc">{{ h.descripcion }}</div>
+
+          <div class="price-row">
+            <div class="price">
+              <span *ngIf="h.descuento > 0" class="price-old">
+                ${{ h.precio }}
+              </span>
+
+              <span class="price-now">
+                ${{ h.precio - (h.precio * h.descuento / 100) | number:'1.0-0' }}
+              </span>
+
+              <span class="price-suf">/ noche</span>
+            </div>
+
+            <ion-button class="reserve-btn" (click)="verDetalle(h)" fill="solid">
+              Ver
+              <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+
+      </ion-card>
+    </div>
+
+    <div class="safe-space"></div>
+
+  </div>
+
+</ion-content>

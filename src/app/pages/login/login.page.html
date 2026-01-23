@@ -1,0 +1,99 @@
+<ion-content class="login-content">
+  <!-- Mini header tipo Booking -->
+<div class="mini-header">
+  <ion-button
+    *ngIf="returnUrl"
+    class="mini-btn"
+    fill="clear"
+    (click)="volver()"
+    aria-label="Volver"
+  >
+    <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+
+  <div class="mini-title">Hotel Mi Kasa</div>
+
+  <ion-button class="mini-guest" fill="clear" (click)="continuarComoInvitado()">
+    Continuar como invitado
+  </ion-button>
+</div>
+
+  <!-- Fondo decorativo (no afecta lógica) -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- Header / Marca -->
+    <header class="hero">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden="true">
+          <ion-icon name="home-outline"></ion-icon>
+        </div>
+
+        <div class="brand-text">
+          <h1>Bienvenido</h1>
+          <p>Reserva tu habitación en <b>Hotel Mi Kasa</b></p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Card login -->
+    <ion-card class="auth-card">
+      <ion-card-content>
+
+        <div class="card-head">
+          <div class="card-title">Iniciar sesión</div>
+          <div class="card-sub">Acceso para clientes y administración</div>
+        </div>
+
+        <ion-item class="field-item" lines="none">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Correo</ion-label>
+          <ion-input
+            [(ngModel)]="credenciales.email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            (keyup.enter)="ingresar()"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item class="field-item" lines="none">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input
+            [(ngModel)]="credenciales.password"
+            type="password"
+            autocomplete="current-password"
+            (keyup.enter)="ingresar()"
+          ></ion-input>
+        </ion-item>
+
+        <ion-button class="primary-btn" expand="block" (click)="ingresar()">
+          Ingresar
+          <ion-icon name="log-in-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <div class="meta-row">
+          <ion-note class="secure-note">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            Conexión segura
+          </ion-note>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Registro -->
+    <div class="bottom">
+      <p class="bottom-text">¿No tienes cuenta?</p>
+      <ion-button class="secondary-btn" fill="clear" routerLink="/registro">
+        Crear cuenta
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

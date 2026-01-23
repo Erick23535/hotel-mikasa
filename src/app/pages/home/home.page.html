@@ -1,0 +1,335 @@
+<ion-header class="home-header ion-no-border" [translucent]="true">
+  <ion-toolbar class="home-toolbar">
+    <div class="toolbar-left">
+      <div class="hello">
+        <div class="hello-title">Hola, {{ nombreUsuario || 'Invitado' }}</div>
+        <div class="hello-sub">Hotel Mi Kasa • Reservas & Experiencias</div>
+      </div>
+    </div>
+
+    <ion-buttons slot="end" class="toolbar-actions">
+
+      <!-- Invitado: mostrar botón Login (solo UI, no rompe nada) -->
+      <ion-button *ngIf="!nombreUsuario" class="pill-login" routerLink="/login" fill="solid">
+        Ingresar
+        <ion-icon name="log-in-outline" slot="end"></ion-icon>
+      </ion-button>
+
+      <!-- Logueado: notificaciones + favoritos + reservas + perfil -->
+      <ion-button *ngIf="nombreUsuario"
+                  class="icon-btn"
+                  fill="clear"
+                  (click)="verNotificaciones()"
+                  aria-label="Notificaciones">
+        <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+
+        <ion-badge *ngIf="cantidadNuevas > 0" class="notif-badge" color="danger">
+          {{ cantidadNuevas }}
+        </ion-badge>
+      </ion-button>
+
+      <!-- ✅ Favoritos -->
+      <ion-button *ngIf="nombreUsuario"
+                  class="icon-btn"
+                  routerLink="/favoritos"
+                  fill="clear"
+                  aria-label="Favoritos">
+        <ion-icon name="heart-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="nombreUsuario" class="icon-btn" routerLink="/mis-reservas" fill="clear" aria-label="Mis reservas">
+        <ion-icon name="calendar-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="nombreUsuario" class="icon-btn" routerLink="/perfil" fill="clear" aria-label="Perfil">
+        <ion-icon name="person-circle-outline" class="profile-ico" slot="icon-only"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="home-content">
+
+  <!-- Fondo decorativo -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- Promo -->
+    <ion-card *ngIf="promoActiva" class="promo-card animate__animated animate__pulse">
+      <ion-card-content class="promo-content">
+        <div class="promo-left">
+          <div class="promo-ico">
+            <ion-icon name="gift-outline"></ion-icon>
+          </div>
+          <div class="promo-text">
+            <div class="promo-title">Oferta Flash</div>
+            <div class="promo-sub">
+              Usa <b>{{ promoActiva.codigo }}</b> y obtén <b>{{ promoActiva.descuento }}% OFF</b> extra
+            </div>
+          </div>
+        </div>
+
+        <ion-button class="promo-btn" size="small" fill="solid" color="light" (click)="copiarCodigo()">
+          Copiar
+          <ion-icon name="copy-outline" slot="end"></ion-icon>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card buscador -->
+    <ion-card class="glass-card search-card">
+      <ion-card-content>
+
+ <div class="search-head">
+  <div>
+    <div class="search-title">Buscar disponibilidad</div>
+    <div class="search-sub">Selecciona fechas y encuentra tu habitación ideal</div>
+  </div>
+
+  <div class="search-chip" *ngIf="busquedaActiva">
+    <ion-icon name="sparkles-outline"></ion-icon>
+    Búsqueda activa
+  </div>
+</div>
+
+<!-- ✅ NUEVO: Huéspedes (fila propia, no rompe nada) -->
+<div class="guests-row">
+  <div class="guests-title">
+    <ion-icon name="people-outline"></ion-icon>
+    <span>Huéspedes</span>
+  </div>
+
+  <div class="grid-guests">
+    <ion-item class="guest-item" lines="none">
+      <ion-label>Adultos</ion-label>
+      <ion-select [(ngModel)]="filtro.adultos" interface="popover">
+        <ion-select-option *ngFor="let n of [1,2,3,4,5,6]" [value]="n">{{n}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item class="guest-item" lines="none">
+      <ion-label>Niños</ion-label>
+      <ion-select [(ngModel)]="filtro.ninos" interface="popover">
+        <ion-select-option *ngFor="let n of [0,1,2,3,4]" [value]="n">{{n}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+          <div class="search-chip" *ngIf="busquedaActiva">
+            <ion-icon name="sparkles-outline"></ion-icon>
+            Búsqueda activa
+          </div>
+        </div>
+
+        <div class="date-grid">
+          <ion-item class="field-item" lines="none">
+            <ion-icon name="log-in-outline" slot="start"></ion-icon>
+            <ion-label position="stacked">Llegada</ion-label>
+            <ion-input type="date" [(ngModel)]="filtro.start"></ion-input>
+          </ion-item>
+
+          <ion-item class="field-item" lines="none">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            <ion-label position="stacked">Salida</ion-label>
+            <ion-input type="date" [(ngModel)]="filtro.end"></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="btn-row">
+          <ion-button
+            class="primary-btn"
+            expand="block"
+            (click)="buscar()"
+            [disabled]="!filtro.start || !filtro.end"
+          >
+            <ion-icon name="search-outline" slot="start"></ion-icon>
+            Ver habitaciones libres
+          </ion-button>
+
+          <ion-button
+            class="ghost-btn"
+            expand="block"
+            fill="clear"
+            (click)="recargarTodo()"
+            *ngIf="busquedaActiva"
+          >
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Ver todas
+          </ion-button>
+        </div>
+
+        <!-- Banner invitado (solo UI) -->
+        <div class="guest-banner" *ngIf="!nombreUsuario">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <div class="guest-text">
+            Estás en modo invitado. Puedes ver habitaciones.
+            <b>Para reservar</b>, inicia sesión.
+          </div>
+          <ion-button class="guest-btn" size="small" routerLink="/login">
+            Ingresar
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Título resultados -->
+    <div class="section-head">
+      <div class="section-title">
+        {{ busquedaActiva ? 'Resultados disponibles' : 'Todas las habitaciones' }}
+      </div>
+      <div class="section-pill">
+        <ion-icon name="bed-outline"></ion-icon>
+        <span>{{ habitaciones?.length || 0 }}</span>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+<div class="empty-state" *ngIf="!loadingRooms && habitaciones.length === 0">
+      <ion-icon name="moon-outline"></ion-icon>
+      <p *ngIf="busquedaActiva">Sin disponibilidad en esas fechas.</p>
+      <p *ngIf="!busquedaActiva">No hay habitaciones registradas.</p>
+    </div>
+<!-- ✅ Loading Skeleton estilo Booking (no rompe nada) -->
+<div class="rooms-grid skeleton-grid" *ngIf="loadingRooms">
+  <ion-card class="room-card skeleton-card" *ngFor="let _ of [1,2,3,4,5,6]">
+    <div class="img-wrap">
+      <ion-skeleton-text animated class="skel-img"></ion-skeleton-text>
+    </div>
+
+    <ion-card-content class="room-body">
+      <ion-skeleton-text animated class="skel-line skel-title"></ion-skeleton-text>
+      <ion-skeleton-text animated class="skel-line"></ion-skeleton-text>
+      <ion-skeleton-text animated class="skel-line skel-short"></ion-skeleton-text>
+
+      <div class="skel-row">
+        <ion-skeleton-text animated class="skel-price"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skel-btn"></ion-skeleton-text>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+    <!-- Grid habitaciones -->
+  <div class="rooms-grid" *ngIf="!loadingRooms">
+  <ion-card class="room-card" *ngFor="let h of habitaciones">
+
+        <div class="img-wrap">
+          <img [src]="h.imagen_url" alt="Habitación {{h.numero}}">
+
+          <div class="img-gradient"></div>
+
+          <div class="top-badges">
+            <div class="room-no">
+              Hab. {{ h.numero }}
+            </div>
+
+            <div class="off-badge" *ngIf="h.descuento > 0">
+              -{{ h.descuento }}%
+            </div>
+          </div>
+
+          <div class="avail-badge" *ngIf="busquedaActiva">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            Disponible
+          </div>
+
+          <!-- ✅ CORAZÓN FAVORITO (no rompe nada) -->
+          <button class="fav-room-btn"
+                  (click)="toggleFavorito(h, $event)"
+                  [attr.aria-label]="isFavorito(h) ? 'Quitar de favoritos' : 'Agregar a favoritos'">
+            <ion-icon [name]="isFavorito(h) ? 'heart' : 'heart-outline'"></ion-icon>
+          </button>
+
+        </div>
+
+        <ion-card-content class="room-body">
+          <div class="room-type">{{ h.tipo }}</div>
+          <div class="room-desc">{{ h.descripcion }}</div>
+
+          <div class="price-row">
+            <div class="price">
+              <span *ngIf="h.descuento > 0" class="price-old">
+                ${{ h.precio }}
+              </span>
+
+              <span class="price-now">
+                ${{ h.precio - (h.precio * h.descuento / 100) | number:'1.0-0' }}
+              </span>
+
+              <span class="price-suf">/ noche</span>
+            </div>
+
+            <ion-button class="reserve-btn" (click)="verDetalle(h)" fill="solid">
+              Reservar
+              <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+
+      </ion-card>
+    </div>
+
+  </div>
+
+  <!-- WhatsApp FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="wa-fab" href="https://wa.me/593999999999?text=Hola,%20tengo%20una%20duda%20sobre%20el%20Hotel" target="_blank">
+      <ion-icon name="logo-whatsapp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Modal Notificaciones (sin tocar lógica) -->
+  <ion-modal
+    [isOpen]="modalOpen"
+    (didDismiss)="modalOpen = false"
+    [initialBreakpoint]="0.55"
+    [breakpoints]="[0, 0.55, 0.85]"
+    class="notif-modal"
+  >
+    <ng-template>
+      <ion-header class="modal-header ion-no-border">
+        <ion-toolbar class="modal-toolbar">
+          <ion-title>Notificaciones</ion-title>
+          <ion-buttons slot="end">
+            <ion-button class="icon-btn" fill="clear" (click)="modalOpen = false">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-content ion-padding">
+        <div class="empty-state" *ngIf="!notificaciones || notificaciones.length === 0">
+          <ion-icon name="notifications-off-outline"></ion-icon>
+          <p>No tienes notificaciones.</p>
+        </div>
+
+        <ion-list class="notif-list" *ngIf="notificaciones && notificaciones.length > 0">
+          <ion-item class="notif-item" *ngFor="let n of notificaciones" lines="none">
+            <div class="notif-ico"
+              [class.ok]="n.mensaje.includes('CONFIRMADA')"
+              [class.bad]="!n.mensaje.includes('CONFIRMADA')"
+              slot="start"
+            >
+              <ion-icon
+                [name]="n.mensaje.includes('CONFIRMADA') ? 'checkmark-circle-outline' : 'alert-circle-outline'">
+              </ion-icon>
+            </div>
+
+            <ion-label class="ion-text-wrap">
+              <div class="notif-msg">{{ n.mensaje }}</div>
+              <div class="notif-date">{{ n.fecha }}</div>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

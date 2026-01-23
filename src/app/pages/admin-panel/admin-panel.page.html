@@ -1,0 +1,630 @@
+<ion-header class="admin-header ion-no-border">
+  <ion-toolbar class="admin-toolbar">
+    <div class="toolbar-left">
+      <div class="title-wrap">
+        <ion-title class="admin-title">Panel de Gerencia</ion-title>
+        <div class="admin-subtitle">Hotel Mi Kasa • Administración</div>
+      </div>
+    </div>
+
+    <ion-buttons slot="end">
+      <ion-button class="icon-btn" fill="clear" (click)="salir()" aria-label="Salir">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar class="segment-toolbar">
+    <ion-segment class="admin-segment" [(ngModel)]="seccion" (ionChange)="segmentChanged($event)" scrollable="true">
+      <ion-segment-button value="dashboard">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <ion-label>Dashboard</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="recepcion">
+        <ion-icon name="qr-code-outline"></ion-icon>
+        <ion-label>Recepción</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="reservas">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <ion-label>Reservas</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="habitaciones">
+        <ion-icon name="bed-outline"></ion-icon>
+        <ion-label>Inventario</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="marketing">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        <ion-label>Marketing</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="admin-content">
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando datos..."
+    ></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <section *ngIf="seccion === 'dashboard'" class="section-wrap">
+
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Resumen Financiero</h2>
+        <p class="section-hint">Vista general de ingresos, clientes y reservas</p>
+      </div>
+
+      <ion-button class="excel-btn" color="success" size="small" (click)="exportarExcel()">
+        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+        Excel
+      </ion-button>
+    </div>
+
+    <ion-card class="hero-card">
+      <ion-card-content class="hero-content">
+        <div>
+          <div class="hero-label">Ingresos Netos</div>
+          <div class="hero-value">${{ stats.ingresos }}</div>
+          <div class="hero-meta">Reservas confirmadas acumuladas</div>
+        </div>
+
+        <div class="hero-icon">
+          <ion-icon name="cash-outline"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="kpi-grid">
+      <ion-card class="kpi-card kpi-warn">
+        <ion-card-content class="kpi-content">
+          <div class="kpi-left">
+            <div class="kpi-value">{{ stats.pendientes }}</div>
+            <div class="kpi-label">Por Aprobar</div>
+          </div>
+          <div class="kpi-badge">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="kpi-card kpi-info">
+        <ion-card-content class="kpi-content">
+          <div class="kpi-left">
+            <div class="kpi-value">{{ stats.clientes }}</div>
+            <div class="kpi-label">Clientes</div>
+          </div>
+          <div class="kpi-badge">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- ✅ Quick Actions (sin TS, solo cambia seccion) -->
+    <div class="quick-grid">
+      <ion-card class="card-soft quick-card">
+        <ion-card-content class="quick-content">
+          <div class="quick-left">
+            <div class="quick-title">Pendientes</div>
+            <div class="quick-sub">Revisar reservas por aprobar</div>
+            <div class="quick-pill">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <span>{{ stats.pendientes }} pendientes</span>
+            </div>
+          </div>
+          <ion-button size="small" class="quick-btn" (click)="seccion='reservas'">
+            Ir
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="card-soft quick-card quick-card-alt">
+        <ion-card-content class="quick-content">
+          <div class="quick-left">
+            <div class="quick-title">Recepción</div>
+            <div class="quick-sub">Check-in / Check-out rápido</div>
+            <div class="quick-pill">
+              <ion-icon name="qr-code-outline"></ion-icon>
+              <span>Escanear por ID</span>
+            </div>
+          </div>
+          <ion-button size="small" class="quick-btn" (click)="seccion='recepcion'">
+            Abrir
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <div class="chart-grid">
+      <ion-card class="card-soft glass-card">
+        <ion-card-header>
+          <ion-card-subtitle>Finanzas</ion-card-subtitle>
+          <ion-card-title>Ingresos por Mes</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="chart-box">
+          <canvas id="barChart"></canvas>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="card-soft glass-card">
+        <ion-card-header>
+          <ion-card-subtitle>Preferencias</ion-card-subtitle>
+          <ion-card-title>Habitaciones Populares</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="chart-box">
+          <canvas id="pieChart"></canvas>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <ion-card class="top-card">
+      <ion-card-content class="top-content">
+        <div class="top-left">
+          <div class="top-chip">
+            <ion-icon name="trophy-outline"></ion-icon>
+            Estrella del Hotel
+          </div>
+
+          <div class="top-title">
+            {{ stats.top_habitacion.tipo }}
+            <span class="muted">(#{{ stats.top_habitacion.numero }})</span>
+          </div>
+
+          <div class="top-sub">
+            Ha sido reservada <b>{{ stats.top_habitacion.veces_reservada }}</b> veces.
+          </div>
+        </div>
+
+        <div class="top-medal">
+          <ion-icon name="trophy"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </section>
+
+  <!-- ===================== RECEPCIÓN ===================== -->
+  <section *ngIf="seccion === 'recepcion'" class="section-wrap animate__animated animate__fadeIn">
+
+    <div class="center-hero">
+      <div class="hero-circle">
+        <ion-icon name="qr-code-outline"></ion-icon>
+      </div>
+      <h2 class="section-title">Recepción</h2>
+      <p class="section-hint">Check-in / Check-out por ID de reserva</p>
+    </div>
+
+    <ion-card class="card-soft glass-card">
+      <ion-card-content>
+        <ion-item class="input-item" lines="none">
+          <ion-icon name="search-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">ID Reserva (Ej: 15)</ion-label>
+          <ion-input type="number" [(ngModel)]="qrInput" (keyup.enter)="buscarReservaQR()"></ion-input>
+          <ion-button slot="end" class="mini-btn" (click)="buscarReservaQR()">
+            Buscar
+          </ion-button>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="reservaEncontrada" class="card-soft glass-card card-accent">
+      <ion-card-header>
+        <ion-card-subtitle>Reserva #{{ reservaEncontrada.id }}</ion-card-subtitle>
+        <ion-card-title>{{ reservaEncontrada.cliente }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list class="list-clean" lines="none">
+          <ion-item lines="none">
+            <ion-icon name="bed-outline" slot="start" color="secondary"></ion-icon>
+            <ion-label>
+              <h3>Habitación {{ reservaEncontrada.numero }}</h3>
+              <p>{{ reservaEncontrada.tipo }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
+            <ion-label>
+              <h3>Estancia</h3>
+              <p>{{ reservaEncontrada.fecha_checkin }} al {{ reservaEncontrada.fecha_checkout }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-icon
+              name="information-circle-outline"
+              slot="start"
+              [color]="reservaEncontrada.estado == 'confirmada' ? 'success' : (reservaEncontrada.estado == 'hospedado' ? 'primary' : 'medium')"
+            ></ion-icon>
+
+            <ion-label>
+              <h3>Estado Actual</h3>
+              <ion-badge
+                [color]="reservaEncontrada.estado == 'confirmada' ? 'success' : (reservaEncontrada.estado == 'hospedado' ? 'primary' : 'medium')"
+              >
+                {{ reservaEncontrada.estado | uppercase }}
+              </ion-badge>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <div class="btn-stack">
+          <ion-button
+            *ngIf="reservaEncontrada.estado == 'confirmada'"
+            expand="block"
+            color="success"
+            class="big-btn"
+            (click)="procesarCheckIn()"
+          >
+            <ion-icon name="key-outline" slot="start"></ion-icon>
+            REALIZAR CHECK-IN
+          </ion-button>
+
+          <ion-button
+            *ngIf="reservaEncontrada.estado == 'hospedado'"
+            expand="block"
+            color="warning"
+            class="big-btn"
+            (click)="procesarCheckOut()"
+          >
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            REALIZAR CHECK-OUT
+          </ion-button>
+
+          <p *ngIf="reservaEncontrada.estado == 'finalizado'" class="muted center">
+            Esta reserva ya ha finalizado.
+          </p>
+
+          <ion-button fill="clear" color="medium" expand="block" (click)="reservaEncontrada = null">
+            Cerrar Búsqueda
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <div class="subhead-row">
+      <h3 class="subhead">
+        <ion-icon name="people-outline"></ion-icon>
+        Huéspedes en Casa
+        <span class="pill">{{ listaHuespedes.length }}</span>
+      </h3>
+    </div>
+
+    <div *ngIf="listaHuespedes.length === 0" class="empty-state">
+      <ion-icon name="moon-outline"></ion-icon>
+      <p>No hay huéspedes activos en este momento.</p>
+    </div>
+
+    <ion-list class="list-soft glass-list">
+      <ion-item-sliding *ngFor="let h of listaHuespedes">
+        <ion-item lines="none">
+          <div class="room-chip" slot="start">{{ h.numero }}</div>
+
+          <ion-label>
+            <h2 class="item-title">{{ h.cliente }}</h2>
+            <p class="item-sub">Salida prevista: {{ h.fecha_checkout }}</p>
+          </ion-label>
+
+          <ion-button slot="end" color="warning" size="small" class="pill-btn" (click)="procesarCheckOut(h.id)">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            SALIDA
+          </ion-button>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="warning" (click)="procesarCheckOut(h.id)">
+            Check-Out
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+  </section>
+
+  <!-- ===================== RESERVAS ===================== -->
+  <section *ngIf="seccion === 'reservas'" class="section-wrap">
+
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Gestión de Reservas</h2>
+        <p class="section-hint">Aprobar, rechazar y revisar comprobantes</p>
+      </div>
+    </div>
+
+    <ion-card class="card-soft glass-card">
+      <ion-card-content>
+        <ion-searchbar
+          class="search-pro"
+          placeholder="Buscar por cliente, ID o estado..."
+          (ionInput)="filtrarReservas($event)"
+          animated="true"
+          showCancelButton="focus"
+        ></ion-searchbar>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="reservas.length === 0" class="empty-state">
+      <ion-icon name="calendar-clear-outline"></ion-icon>
+      <p>No hay reservas registradas.</p>
+    </div>
+
+    <ion-card *ngFor="let r of reservas" class="card-soft glass-card reserva-card">
+      <ion-card-header>
+        <div class="reserva-head">
+          <div>
+            <ion-card-subtitle>
+              Reserva #{{ r.id }}
+              <span class="dot">•</span>
+              <span class="small-muted">{{ r.fecha_creacion }}</span>
+            </ion-card-subtitle>
+            <ion-card-title class="reserva-title">{{ r.cliente }}</ion-card-title>
+          </div>
+
+          <ion-badge
+            class="status-badge"
+            [color]="r.estado == 'pendiente' ? 'warning' : (r.estado == 'confirmada' ? 'success' : 'danger')"
+          >
+            {{ r.estado | uppercase }}
+          </ion-badge>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <div class="reserva-grid">
+          <div class="reserva-info">
+            <div class="line">
+              <ion-icon name="bed-outline"></ion-icon>
+              <span><b>Habitación:</b> {{ r.habitacion }}</span>
+            </div>
+
+            <div class="line">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span><b>Total:</b> ${{ r.total }}</span>
+            </div>
+
+            <div class="line">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span><b>Fechas:</b> {{ r.fecha_checkin }} al {{ r.fecha_checkout }}</span>
+            </div>
+
+            <div class="line">
+              <ion-icon name="add-circle-outline"></ion-icon>
+              <span><b>Extras:</b> {{ r.extras }}</span>
+            </div>
+          </div>
+
+          <div class="comprobante-box" *ngIf="r.comprobante_url">
+            <div class="comprobante-top">
+              <ion-icon name="image-outline"></ion-icon>
+              <span>Comprobante</span>
+            </div>
+
+            <img
+              [src]="r.comprobante_url"
+              class="comprobante-img"
+              onclick="window.open(this.src)"
+            />
+
+            <div class="comprobante-actions">
+              <a [href]="r.comprobante_url" target="_blank">Ver en pantalla completa</a>
+            </div>
+          </div>
+
+          <div class="comprobante-missing" *ngIf="!r.comprobante_url">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>Sin comprobante</span>
+          </div>
+        </div>
+
+        <div class="divider-soft"></div>
+
+        <div class="actions-row">
+          <ion-button size="small" color="success" class="action-btn" (click)="cambiarEstado(r, 'confirmada')">
+            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+            Aprobar
+          </ion-button>
+
+          <ion-button size="small" color="danger" class="action-btn" (click)="cambiarEstado(r, 'cancelada')">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Rechazar
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+  </section>
+
+  <!-- ===================== INVENTARIO ===================== -->
+  <section *ngIf="seccion === 'habitaciones'" class="section-wrap">
+
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Inventario</h2>
+        <p class="section-hint">Gestiona habitaciones y ofertas</p>
+      </div>
+    </div>
+
+    <ion-button expand="block" color="secondary" class="big-btn soft-btn" (click)="mostrarFormulario = !mostrarFormulario">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      {{ mostrarFormulario ? 'Cancelar' : 'Nueva Habitación' }}
+    </ion-button>
+
+    <ion-card *ngIf="mostrarFormulario" class="card-soft glass-card form-card">
+      <ion-card-header>
+        <ion-card-title>Agregar al Inventario</ion-card-title>
+        <ion-card-subtitle>Completa los datos básicos</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Número (Ej: 305)</ion-label>
+          <ion-input [(ngModel)]="nuevaHab.numero"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Tipo (Ej: Suite)</ion-label>
+          <ion-input [(ngModel)]="nuevaHab.tipo"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Precio ($)</ion-label>
+          <ion-input type="number" [(ngModel)]="nuevaHab.precio"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">URL Imagen</ion-label>
+          <ion-input [(ngModel)]="nuevaHab.imagen_url"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Descripción</ion-label>
+          <ion-textarea [(ngModel)]="nuevaHab.descripcion"></ion-textarea>
+        </ion-item>
+
+        <ion-button expand="block" class="big-btn" (click)="guardarHabitacion()">
+          Guardar Habitación
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="subhead-row">
+      <h3 class="subhead">
+        <ion-icon name="bed-outline"></ion-icon>
+        Inventario Actual
+        <span class="pill">{{ listaHabitaciones.length }}</span>
+      </h3>
+    </div>
+
+    <div *ngIf="listaHabitaciones.length === 0" class="empty-state">
+      <ion-icon name="home-outline"></ion-icon>
+      <p>No hay habitaciones registradas.</p>
+    </div>
+
+    <ion-list class="list-soft glass-list">
+      <ion-item-sliding *ngFor="let h of listaHabitaciones">
+        <ion-item lines="none">
+          <ion-thumbnail slot="start" class="thumb-pro">
+            <img [src]="h.imagen_url" class="thumb-img">
+          </ion-thumbnail>
+
+          <ion-label>
+            <div class="room-title">
+              <span>Habitación {{ h.numero }}</span>
+
+              <ion-badge color="danger" *ngIf="h.descuento > 0" class="off-badge">
+                -{{ h.descuento }}%
+              </ion-badge>
+            </div>
+
+            <div class="room-sub">{{ h.tipo }}</div>
+
+            <div class="price-row">
+              <span *ngIf="h.descuento > 0" class="price-old">
+                ${{ h.precio }}
+              </span>
+
+              <span class="price-now">
+                ${{ h.precio - (h.precio * h.descuento / 100) | number:'1.0-0' }}
+              </span>
+            </div>
+          </ion-label>
+
+          <ion-button slot="end" fill="clear" class="icon-round" (click)="ponerOferta(h)">
+            <ion-icon name="pricetag-outline" color="warning" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="borrarHabitacion(h.id)">
+            <ion-icon name="trash-outline" slot="top"></ion-icon>
+            Eliminar
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+  </section>
+
+  <!-- ===================== MARKETING ===================== -->
+  <section *ngIf="seccion === 'marketing'" class="section-wrap">
+
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Marketing</h2>
+        <p class="section-hint">Crea cupones y controla promociones</p>
+      </div>
+    </div>
+
+    <ion-card class="card-soft glass-card ticket-card">
+      <ion-card-header>
+        <ion-card-title>Crear Promoción</ion-card-title>
+        <ion-card-subtitle>Genera un cupón con descuento</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Código (Ej: VERANO2026)</ion-label>
+          <ion-input [(ngModel)]="nuevoCupon.codigo" class="upper-input"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Descuento (%)</ion-label>
+          <ion-input type="number" [(ngModel)]="nuevoCupon.descuento"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" color="success" class="big-btn" (click)="guardarCupon()">
+          <ion-icon name="rocket-outline" slot="start"></ion-icon>
+          Lanzar Promoción
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="subhead-row">
+      <h3 class="subhead">
+        <ion-icon name="ticket-outline"></ion-icon>
+        Cupones Activos
+        <span class="pill">{{ listaCupones.length }}</span>
+      </h3>
+    </div>
+
+    <div *ngIf="listaCupones.length === 0" class="empty-state">
+      <ion-icon name="pricetag-outline"></ion-icon>
+      <p>No hay cupones activos.</p>
+    </div>
+
+    <ion-list class="list-soft glass-list">
+      <ion-item *ngFor="let c of listaCupones" lines="none">
+        <div class="coupon-chip" slot="start">
+          <ion-icon name="ticket-outline"></ion-icon>
+        </div>
+
+        <ion-label>
+          <div class="coupon-code">{{ c.codigo }}</div>
+          <div class="coupon-sub">Descuento: <b>{{ c.descuento }}%</b></div>
+        </ion-label>
+
+        <ion-button slot="end" color="danger" fill="clear" class="icon-round" (click)="eliminarCupon(c.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+
+  </section>
+
+</ion-content>
