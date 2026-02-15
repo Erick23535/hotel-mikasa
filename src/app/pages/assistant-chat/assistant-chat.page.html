@@ -1,0 +1,105 @@
+<ion-header translucent>
+  <ion-toolbar class="chat-toolbar">
+
+    <!-- ✅ SALIR / ATRÁS (iOS style) -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" class="icon-btn exit-btn" (click)="salir()">
+        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+        <ion-label>Salir</ion-label>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="chat-title">
+      <div class="title-row">
+        <div class="brand-dot"></div>
+        <div class="title-text">
+          <div class="t1">Asistente</div>
+          <div class="t2">Seguro • Privado</div>
+        </div>
+      </div>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <!-- (Opcional) Cerrar con X -->
+      <ion-button fill="clear" class="icon-btn" (click)="salir()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <!-- Limpiar chat -->
+      <ion-button fill="clear" class="icon-btn" (click)="clearChat()">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen class="chat-content">
+  <!-- Quick actions -->
+  <div class="quick-row">
+    <div class="quick-scroll">
+      <ion-chip class="quick-chip" *ngFor="let q of quickActions" (click)="tapQuick(q)">
+        <ion-label>{{ q.label }}</ion-label>
+      </ion-chip>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-wrap">
+    <ng-container *ngFor="let m of messages; let i = index">
+      <div *ngIf="shouldShowDayDivider?.(m, i)" class="day-divider">
+        <span>{{ m.at | date:'fullDate' }}</span>
+      </div>
+
+      <div class="msg-row" [class.me]="m.role==='user'" [class.bot]="m.role==='assistant'">
+        <div class="avatar" *ngIf="m.role==='assistant'">
+          <ion-icon name="sparkles-outline"></ion-icon>
+        </div>
+
+        <div class="bubble" [class.me]="m.role==='user'" [class.bot]="m.role==='assistant'">
+          <div class="text">{{ m.text }}</div>
+          <div class="meta">
+            <span class="time">{{ m.at | date:'shortTime' }}</span>
+            <ion-icon *ngIf="m.role==='user'" name="checkmark-done-outline" class="tick"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="sending" class="msg-row bot">
+      <div class="avatar">
+        <ion-icon name="sparkles-outline"></ion-icon>
+      </div>
+
+      <div class="bubble bot typing">
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="chatEnd" class="chat-end"></div>
+  </div>
+</ion-content>
+
+<ion-footer class="composer">
+  <ion-toolbar class="composer-toolbar">
+    <div class="composer-row">
+      <div class="input-shell">
+        <ion-icon name="chatbubble-ellipses-outline" class="left-ico"></ion-icon>
+
+        <ion-input
+          class="chat-input"
+          [(ngModel)]="inputText"
+          placeholder="Escribe tu mensaje…"
+          (keyup.enter)="send()"
+          [disabled]="sending">
+        </ion-input>
+      </div>
+
+      <ion-button class="send-btn" (click)="send()" [disabled]="sending || !inputText?.trim()">
+        <ion-icon name="send-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

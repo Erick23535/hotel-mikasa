@@ -1,31 +1,56 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Capacitor } from '@capacitor/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class Api {
-  
-  // Cambia esto por tu IP local si pruebas en celular real (ej: http://192.168.1.50/api-hotel)
-  url = 'http://localhost/api-hotel'; 
 
-  constructor(private http: HttpClient) { }
+  private readonly WEB_URL = 'http://localhost/api-hotel';
+  private readonly LAN_URL = 'http://192.168.0.10/api-hotel';
+
+  // ✅ Base URL final (web/android/ios)
+  readonly baseUrl: string = this.getBaseUrl(); // ✅ FIX: ahora existe baseUrl
+  readonly url: string = this.baseUrl;          // ✅ mantiene tu "url" como siempre
+
+  private jsonHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+  constructor(private http: HttpClient) {}
+
+  private getBaseUrl(): string {
+    try {
+      const platform = Capacitor.getPlatform(); // 'web' | 'android' | 'ios'
+
+      // ✅ En Android/iOS usa LAN
+      if (platform !== 'web') return this.LAN_URL;
+
+      // ✅ En web:
+      // - Si estás en localhost => API local
+      // - Si NO estás en localhost (ej: abres desde celular/otra PC) => usa LAN
+      const host =
+        (typeof window !== 'undefined' && window.location && window.location.hostname)
+          ? window.location.hostname
+          : 'localhost';
+
+      const isLocal = host === 'localhost' || host === '127.0.0.1';
+      return isLocal ? this.WEB_URL : this.LAN_URL;
+
+    } catch {
+      return this.WEB_URL;
+    }
+  }
 
   // ============================
   //      ADMINISTRACIÓN
   // ============================
 
-  // Obtener todas las reservas (Admin)
   getTodasLasReservas() {
     return this.http.get(`${this.url}/admin_get_reservas.php`);
   }
 
-  // Alias para compatibilidad (Arregla error 3)
   getReservasAdmin() {
     return this.getTodasLasReservas();
   }
 
-  // Cambiar estado (Aprobar/Rechazar)
   cambiarEstadoReserva(id: number, estado: string) {
     return this.http.post(`${this.url}/admin_cambiar_estado.php`, {
       reserva_id: id,
@@ -33,57 +58,94 @@ export class Api {
     });
   }
 
-  // Alias para compatibilidad (Arregla error 2)
   actualizarReserva(data: any) {
     return this.cambiarEstadoReserva(data.id, data.estado);
   }
 
-  // Obtener estadísticas para Dashboard
   obtenerEstadisticas() {
     return this.http.get(`${this.url}/admin_stats.php`);
   }
 
-  // Obtener datos para Gráficos
   getDatosGraficos() {
     return this.http.get(`${this.url}/admin_graficos.php`);
   }
-// ... dentro de la clase Api ...
-// ... dentro de la clase Api ...
 
   obtenerNotificaciones(usuario_id: number) {
     return this.http.get(`${this.url}/get_notificaciones.php?id=${usuario_id}`);
   }
-  actualizarOfertaHabitacion(id: number, descuento: number) {
-    return this.http.post(`${this.url}/admin_oferta_habitacion.php`, { 
-      id: id, 
-      descuento: descuento 
-    });
-  }
-  // ... dentro de la clase Api ...
-// ... (tus otras funciones) ...
 
-  // Obtener lista de gente que está actualmente en el hotel
-  getHuespedesActivos() {
-    return this.http.get(`${this.url}/admin_recepcion.php?activos=true`);
+  actualizarOfertaHabitacion(id: number, descuento: number) {
+    return this.http.post(`${this.url}/admin_oferta_habitacion.php`, { id, descuento });
   }
-  // GESTIÓN DE RECEPCIÓN
+requestPasswordReset(email: string) {
+  return this.http.post<any>(`${this.baseUrl}/solicitar_recuperacion.php`, { email });
+}
+
+resetPassword(email: string, code: string, new_password: string) {
+  return this.http.post<any>(`${this.baseUrl}/reset_password.php`, { email, code, new_password });
+}
+
+// Admin
+adminListUsers(adminKey: string) {
+  return this.http.post<any>(`${this.baseUrl}/admin_listar_usuarios.php`, { adminKey });
+}
+
+adminUpdateRole(adminKey: string, user_id: number, rol: string) {
+  return this.http.post<any>(`${this.baseUrl}/admin_actualizar_rol.php`, {
+    adminKey,
+    user_id,
+    rol
+  });
+}
+
+
+  // ============================
+  //      RECEPCIÓN
+  // ============================
+
+  getHuespedesActivos() {
+    return this.http.get(`${this.url}/admin_recepcion.php?activos=1`);
+  }
+
   buscarReservaPorID(id: number) {
     return this.http.get(`${this.url}/admin_recepcion.php?id=${id}`);
   }
 
-  procesarRecepcion(id: number, accion: string) {
-    return this.http.post(`${this.url}/admin_recepcion.php`, { reserva_id: id, accion: accion });
+  procesarRecepcion(reservaId: number, accion: 'checkin' | 'checkout', facturaUrl?: string | null) {
+    const body: any = { reserva_id: reservaId, accion };
+    if (facturaUrl) body.factura_url = facturaUrl;
+
+    return this.http.post(
+      `${this.url}/admin_recepcion.php`,
+      body,
+      { headers: this.jsonHeaders }
+    );
   }
-  // Gestión de Habitaciones
+
+  subirFacturaCheckout(reservaId: number, base64: string, fileName: string) {
+    const body = { reserva_id: reservaId, base64, fileName };
+
+    return this.http.post<any>(
+      `${this.url}/admin_upload_factura.php`,
+      body,
+      { headers: this.jsonHeaders }
+    );
+  }
+
+  // ============================
+  //      HABITACIONES (ADMIN)
+  // ============================
+
   agregarHabitacion(data: any) {
     return this.http.post(`${this.url}/admin_agregar_habitacion.php`, data);
   }
-// ESTA ES LA QUE FALTA PARA ARREGLAR EL ERROR:
-  validarCupon(codigo: string) {
-    return this.http.post(`${this.url}/validar_cupon.php`, { codigo: codigo });
-  }
+
   eliminarHabitacion(id: number) {
-    return this.http.post(`${this.url}/admin_eliminar_habitacion.php`, { id: id });
+    return this.http.post(`${this.url}/admin_eliminar_habitacion.php`, { id });
+  }
+
+  actualizarHabitacion(data: any) {
+    return this.http.post(`${this.url}/admin_actualizar_habitacion.php`, data);
   }
 
   // ============================
@@ -94,19 +156,16 @@ export class Api {
     return this.http.get(`${this.url}/get_habitaciones.php`);
   }
 
- buscarDisponibles(
-  fechaIn: string,
-  fechaOut: string,
-  guests?: { adults?: number; children?: number }
-) {
-  const body: any = { fecha_in: fechaIn, fecha_out: fechaOut };
-
-  if (guests?.adults != null) body.adultos = guests.adults;
-  if (guests?.children != null) body.ninos = guests.children;
-
-  return this.http.post(`${this.url}/buscar_disponibles.php`, body);
-}
-
+  buscarDisponibles(
+    fechaIn: string,
+    fechaOut: string,
+    guests?: { adults?: number; children?: number }
+  ) {
+    const body: any = { fecha_in: fechaIn, fecha_out: fechaOut };
+    if (guests?.adults != null) body.adultos = guests.adults;
+    if (guests?.children != null) body.ninos = guests.children;
+    return this.http.post(`${this.url}/buscar_disponibles.php`, body);
+  }
 
   getReservasUsuario(usuario_id: any) {
     return this.http.get(`${this.url}/get_reservas.php?id=${usuario_id}`);
@@ -121,6 +180,10 @@ export class Api {
     formData.append('foto', archivoBlob);
     formData.append('reserva_id', reserva_id);
     return this.http.post(`${this.url}/subir_comprobante.php`, formData);
+  }
+
+  subirFacturaReserva(reservaId: number, base64: string, fileName: string) {
+    return this.subirFacturaCheckout(reservaId, base64, fileName);
   }
 
   // ============================
@@ -138,9 +201,15 @@ export class Api {
   registrarUsuario(data: any) {
     return this.http.post(`${this.url}/registro.php`, data);
   }
-// ... dentro de la clase Api ...
 
-  // GESTIÓN DE CUPONES (ADMIN)
+  loginUsuario(data: any) {
+    return this.http.post(`${this.url}/login.php`, data);
+  }
+
+  // ============================
+  //      CUPONES (ADMIN/USER)
+  // ============================
+
   getCupones() {
     return this.http.get(`${this.url}/admin_cupones.php`);
   }
@@ -150,33 +219,59 @@ export class Api {
   }
 
   borrarCupon(id: number) {
-    return this.http.post(`${this.url}/admin_cupones.php`, { accion: 'borrar', id: id });
+    return this.http.post(`${this.url}/admin_cupones.php`, { accion: 'borrar', id });
   }
 
-  // OBTENER PROMO ACTIVA (USUARIO)
   getPromoActiva() {
     return this.http.get(`${this.url}/admin_cupones.php?promo=true`);
   }
-  loginUsuario(data: any) {
-    return this.http.post(`${this.url}/login.php`, data);
+
+  validarCupon(codigo: string) {
+    return this.http.post(`${this.url}/validar_cupon.php`, { codigo });
   }
+
   // ============================
-//        FAVORITOS
-// ============================
+  //        FAVORITOS
+  // ============================
 
-// FAVORITOS
-getFavoritos(usuario_id: number, mode: 'ids' | 'details' = 'details') {
-  return this.http.get(`${this.url}/favoritos_list.php?usuario_id=${usuario_id}&mode=${mode}`);
-}
+  getFavoritos(usuario_id: number, mode: 'ids' | 'details' = 'details') {
+    return this.http.get(`${this.url}/favoritos_list.php?usuario_id=${usuario_id}&mode=${mode}`);
+  }
 
-toggleFavorito(usuario_id: number, habitacion_id: number) {
-  return this.http.post(`${this.url}/favoritos_toggle.php`, { usuario_id, habitacion_id });
-}
+  toggleFavorito(usuario_id: number, habitacion_id: number) {
+    return this.http.post(`${this.url}/favoritos_toggle.php`, { usuario_id, habitacion_id });
+  }
 
+  syncFavoritos(usuario_id: number, habitacion_ids: number[]) {
+    return this.http.post(`${this.url}/favoritos_sync.php`, { usuario_id, habitacion_ids });
+  }
 
-// Sync (opcional) - si luego quieres sincronizar localStorage -> BD
-syncFavoritos(usuario_id: number, habitacion_ids: number[]) {
-  return this.http.post(`${this.url}/favoritos_sync.php`, { usuario_id, habitacion_ids });
-}
+  // ============================
+  //   RESERVAS (NUEVO - ASISTENTE)
+  // ============================
 
+  checkHabitacionDisponible(habitacionId: number, start: string, end: string, excludeReservaId?: number) {
+    return this.http.post<any>(`${this.url}/check_habitacion_disponible.php`, {
+      habitacion_id: habitacionId,
+      fecha_checkin: start,
+      fecha_checkout: end,
+      exclude_reserva_id: excludeReservaId ?? null
+    }, { headers: this.jsonHeaders });
+  }
+
+  cancelarReserva(usuario_id: number, reserva_id: number) {
+    return this.http.post(`${this.url}/cancelar_reserva.php`, {
+      usuario_id,
+      reserva_id
+    }, { headers: this.jsonHeaders });
+  }
+
+  cambiarFechasReserva(usuario_id: number, reserva_id: number, start: string, end: string) {
+    return this.http.post(`${this.url}/cambiar_fechas_reserva.php`, {
+      usuario_id,
+      reserva_id,
+      fecha_checkin: start,
+      fecha_checkout: end
+    }, { headers: this.jsonHeaders });
+  }
 }

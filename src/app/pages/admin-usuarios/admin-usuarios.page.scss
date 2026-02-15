@@ -1,0 +1,264 @@
+/* ===========================
+   ADMIN USUARIOS — PREMIUM UI
+   Apple / bancario (glass + clean)
+   =========================== */
+
+.au-content {
+  --background: transparent;
+  position: relative;
+}
+
+/* Fondo con orbes */
+.au-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 500px at 15% 10%, rgba(0, 122, 255, 0.12), transparent 60%),
+    radial-gradient(900px 420px at 85% 20%, rgba(52, 199, 89, 0.12), transparent 60%),
+    radial-gradient(1000px 520px at 50% 95%, rgba(175, 82, 222, 0.10), transparent 55%),
+    linear-gradient(180deg, rgba(0,0,0,.03), transparent 240px);
+}
+
+.orb {
+  position: absolute;
+  filter: blur(30px);
+  opacity: .75;
+  border-radius: 999px;
+  transform: translateZ(0);
+}
+
+.orb-a { width: 260px; height: 260px; left: -40px; top: 90px; background: rgba(0,122,255,.18); }
+.orb-b { width: 260px; height: 260px; right: -60px; top: 160px; background: rgba(52,199,89,.16); }
+.orb-c { width: 320px; height: 320px; left: 30%; bottom: -120px; background: rgba(175,82,222,.14); }
+
+.au-wrap {
+  max-width: 1050px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Header */
+.au-header ion-toolbar {
+  --background: rgba(255, 255, 255, 0.65);
+  --backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+
+/* Hero */
+.au-hero {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.au-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 10px 25px rgba(0,0,0,.06);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.au-title {
+  margin: 10px 0 6px 0;
+  font-size: 22px;
+  letter-spacing: -0.2px;
+  font-weight: 800;
+}
+
+.au-sub {
+  margin: 0;
+  color: rgba(0,0,0,.62);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.au-stat {
+  min-width: 120px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 12px 30px rgba(0,0,0,.07);
+}
+
+.au-stat__label {
+  font-size: 12px;
+  color: rgba(0,0,0,.55);
+}
+
+.au-stat__value {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+}
+
+/* Cards glass */
+.au-card {
+  border-radius: 18px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 18px 45px rgba(0,0,0,.08);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.au-card__head {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 230px);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.au-card__head--tight {
+  grid-template-columns: 1fr auto;
+}
+
+.au-card__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  letter-spacing: -0.1px;
+}
+
+.au-btn {
+  --border-radius: 14px;
+  font-weight: 800;
+  text-transform: none;
+}
+
+.au-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 720px) {
+  .au-card__head { grid-template-columns: 1fr; }
+  .au-form { grid-template-columns: 1fr; }
+}
+
+.au-item {
+  --background: rgba(255,255,255,.78);
+  --border-radius: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 10px 26px rgba(0,0,0,.05);
+}
+
+.au-item ion-icon {
+  color: rgba(0,0,0,.55);
+}
+
+.au-hint {
+  margin-top: 10px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: rgba(0,0,0,.55);
+  font-size: 12px;
+}
+
+/* List */
+.au-list {
+  background: transparent;
+  padding: 0;
+}
+
+.au-user {
+  --background: rgba(255,255,255,.78);
+  margin-bottom: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 12px 30px rgba(0,0,0,.06);
+}
+
+.au-user__avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  margin-right: 10px;
+  background: rgba(0,0,0,.03);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.au-user__avatar ion-icon {
+  font-size: 34px;
+  color: rgba(0,0,0,.55);
+}
+
+.au-user__label h2 {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.1px;
+}
+
+.au-user__email {
+  font-weight: 600;
+  color: rgba(0,0,0,.55);
+  margin-left: 6px;
+}
+
+.au-user__meta {
+  margin: 4px 0 0 0;
+  color: rgba(0,0,0,.6);
+  font-size: 12px;
+}
+
+.au-role {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.au-select {
+  min-width: 140px;
+  max-width: 180px;
+  margin-right: 10px;
+  --placeholder-color: rgba(0,0,0,.5);
+}
+
+.au-save {
+  --border-radius: 12px;
+  font-weight: 800;
+  text-transform: none;
+}
+
+/* Empty */
+.au-empty {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: rgba(0,0,0,.6);
+}
+
+.au-empty ion-icon {
+  font-size: 26px;
+  color: rgba(0,0,0,.5);
+}
+
+.au-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.03);
+  border: 1px solid rgba(0,0,0,.06);
+  font-size: 12px;
+}

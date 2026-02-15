@@ -1,22 +1,22 @@
 <ion-content class="login-content">
   <!-- Mini header tipo Booking -->
-<div class="mini-header">
-  <ion-button
-    *ngIf="returnUrl"
-    class="mini-btn"
-    fill="clear"
-    (click)="volver()"
-    aria-label="Volver"
-  >
-    <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
-  </ion-button>
+  <div class="mini-header">
+    <ion-button
+      *ngIf="returnUrl"
+      class="mini-btn"
+      fill="clear"
+      (click)="volver()"
+      aria-label="Volver"
+    >
+      <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
 
-  <div class="mini-title">Hotel Mi Kasa</div>
+    <div class="mini-title">Hotel Mi Kasa</div>
 
-  <ion-button class="mini-guest" fill="clear" (click)="continuarComoInvitado()">
-    Continuar como invitado
-  </ion-button>
-</div>
+    <ion-button class="mini-guest" fill="clear" (click)="continuarComoInvitado()">
+      Continuar como invitado
+    </ion-button>
+  </div>
 
   <!-- Fondo decorativo (no afecta lógica) -->
   <div class="bg-orb orb-1"></div>
@@ -76,6 +76,13 @@
           <ion-icon name="log-in-outline" slot="end"></ion-icon>
         </ion-button>
 
+        <!-- ✅ NUEVO: Link “¿Olvidaste tu contraseña?” (debajo del botón INGRESAR) -->
+        <div class="text-center" style="margin-top: 10px;">
+          <a (click)="openRecovery()" style="cursor:pointer; font-weight:600;">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
         <div class="meta-row">
           <ion-note class="secure-note">
             <ion-icon name="shield-checkmark-outline"></ion-icon>
@@ -96,4 +103,80 @@
     </div>
 
   </div>
+
+  <!-- ✅ NUEVO: Modal Recuperar contraseña (al final del ion-content) -->
+  <ion-modal [isOpen]="recoveryOpen" (didDismiss)="recoveryOpen=false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Recuperar contraseña</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="recoveryOpen=false">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <!-- Paso 1 -->
+        <div *ngIf="recoveryStep===1">
+          <ion-item>
+            <ion-label position="stacked">Correo</ion-label>
+            <ion-input
+              [(ngModel)]="recoveryEmail"
+              type="email"
+              placeholder="tu@email.com"
+            ></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" (click)="sendRecoveryCode()" [disabled]="loadingRec">
+            Enviar código
+          </ion-button>
+
+          <ion-note color="medium">
+            Te enviaremos un código (en modo local te lo mostrará para probar).
+          </ion-note>
+        </div>
+
+        <!-- Paso 2 -->
+        <div *ngIf="recoveryStep===2">
+          <ion-item>
+            <ion-label position="stacked">Código (6 dígitos)</ion-label>
+            <ion-input
+              [(ngModel)]="recoveryCode"
+              inputmode="numeric"
+              maxlength="6"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Nueva contraseña</ion-label>
+            <ion-input
+              [(ngModel)]="recoveryNewPass"
+              type="password"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Confirmar contraseña</ion-label>
+            <ion-input
+              [(ngModel)]="recoveryNewPass2"
+              type="password"
+            ></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" (click)="confirmReset()" [disabled]="loadingRec">
+            Cambiar contraseña
+          </ion-button>
+        </div>
+
+        <ion-toast
+          [isOpen]="toastOpen"
+          [message]="toastMsg"
+          duration="2200"
+          (didDismiss)="toastOpen=false">
+        </ion-toast>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

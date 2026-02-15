@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+  <domain-config cleartextTrafficPermitted="true">
+    <!-- IP de tu PC en tu red WiFi -->
+    <domain includeSubdomains="false">192.168.0.10</domain>
+
+    <!-- si a veces pruebas en localhost dentro de la PC -->
+    <domain includeSubdomains="false">localhost</domain>
+  </domain-config>
+</network-security-config>

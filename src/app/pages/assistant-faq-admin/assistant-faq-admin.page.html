@@ -1,0 +1,54 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Entrenar FAQ (Local)</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="danger" (click)="resetAll()">
+        Reset
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Agregar nueva Q/A</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input [(ngModel)]="q" placeholder="Pregunta (ej: ¿Cómo reservo?)"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-textarea [(ngModel)]="a" placeholder="Respuesta"></ion-textarea>
+      </ion-item>
+      <ion-button expand="block" (click)="add()">Guardar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Entrenamiento guardado (custom)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list *ngIf="!loading">
+        <ion-item *ngFor="let it of custom; let i = index">
+          <ion-label>
+            <h2>{{ it.q }}</h2>
+            <p>{{ it.a }}</p>
+          </ion-label>
+          <ion-button slot="end" fill="clear" color="danger" (click)="del(i)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item *ngIf="custom.length === 0">
+          <ion-label>No hay Q/A entrenadas aún.</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <ion-item *ngIf="loading">
+        <ion-label>Cargando…</ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

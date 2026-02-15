@@ -1,3 +1,18 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <!-- ✅ FAB IA global -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!hideAiFab">
+    <ion-fab-button class="ai-fab ai-pulse" (click)="openAssistantChat()">
+
+      <!-- Opción A: IonIcon (blanco) -->
+      <ion-icon name="sparkles-outline" class="ai-icon"></ion-icon>
+
+      <!-- Opción B: SVG propio (si lo pones en assets) -->
+      <!-- <ion-icon src="assets/icons/ai-gpt.svg" class="ai-icon"></ion-icon> -->
+
+      <!-- ✅ badge puntito -->
+      <span class="ai-badge" *ngIf="unread > 0"></span>
+    </ion-fab-button>
+  </ion-fab>
 </ion-app>

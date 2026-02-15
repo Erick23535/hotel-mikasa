@@ -11,6 +11,14 @@
       <ion-button class="icon-btn" fill="clear" (click)="salir()" aria-label="Salir">
         <ion-icon name="log-out-outline"></ion-icon>
       </ion-button>
+            <ion-button (click)="openAssistantAdmin()">
+        <ion-icon name="settings-outline" slot="start"></ion-icon>
+        Admin IA
+      </ion-button>
+<ion-button routerLink="/admin-usuarios" expand="block">
+  Usuarios y Roles
+</ion-button>
+
     </ion-buttons>
   </ion-toolbar>
 
@@ -195,145 +203,159 @@
 
   </section>
 
-  <!-- ===================== RECEPCIÓN ===================== -->
-  <section *ngIf="seccion === 'recepcion'" class="section-wrap animate__animated animate__fadeIn">
+<!-- ===================== RECEPCIÓN ===================== -->
+<section *ngIf="seccion === 'recepcion'" class="section-wrap animate__animated animate__fadeIn">
 
-    <div class="center-hero">
-      <div class="hero-circle">
-        <ion-icon name="qr-code-outline"></ion-icon>
-      </div>
-      <h2 class="section-title">Recepción</h2>
-      <p class="section-hint">Check-in / Check-out por ID de reserva</p>
+  <div class="center-hero">
+    <div class="hero-circle">
+      <ion-icon name="qr-code-outline"></ion-icon>
     </div>
+    <h2 class="section-title">Recepción</h2>
+    <p class="section-hint">Check-in / Check-out por ID de reserva</p>
+  </div>
 
-    <ion-card class="card-soft glass-card">
-      <ion-card-content>
-        <ion-item class="input-item" lines="none">
-          <ion-icon name="search-outline" slot="start"></ion-icon>
-          <ion-label position="stacked">ID Reserva (Ej: 15)</ion-label>
-          <ion-input type="number" [(ngModel)]="qrInput" (keyup.enter)="buscarReservaQR()"></ion-input>
-          <ion-button slot="end" class="mini-btn" (click)="buscarReservaQR()">
-            Buscar
-          </ion-button>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
+  <ion-card class="card-soft glass-card">
+    <ion-card-content>
+      <ion-item class="input-item" lines="none">
+        <ion-icon name="search-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">ID Reserva (Ej: 15)</ion-label>
+        <ion-input type="number" [(ngModel)]="qrInput" (keyup.enter)="buscarReservaQR()"></ion-input>
+        <ion-button slot="end" class="mini-btn" (click)="buscarReservaQR()">
+          Buscar
+        </ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-    <ion-card *ngIf="reservaEncontrada" class="card-soft glass-card card-accent">
-      <ion-card-header>
-        <ion-card-subtitle>Reserva #{{ reservaEncontrada.id }}</ion-card-subtitle>
-        <ion-card-title>{{ reservaEncontrada.cliente }}</ion-card-title>
-      </ion-card-header>
+  <ion-card *ngIf="reservaEncontrada" class="card-soft glass-card card-accent">
+    <ion-card-header>
+      <ion-card-subtitle>Reserva #{{ reservaEncontrada.id }}</ion-card-subtitle>
+      <ion-card-title>{{ reservaEncontrada.cliente }}</ion-card-title>
+    </ion-card-header>
 
-      <ion-card-content>
-        <ion-list class="list-clean" lines="none">
-          <ion-item lines="none">
-            <ion-icon name="bed-outline" slot="start" color="secondary"></ion-icon>
-            <ion-label>
-              <h3>Habitación {{ reservaEncontrada.numero }}</h3>
-              <p>{{ reservaEncontrada.tipo }}</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item lines="none">
-            <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
-            <ion-label>
-              <h3>Estancia</h3>
-              <p>{{ reservaEncontrada.fecha_checkin }} al {{ reservaEncontrada.fecha_checkout }}</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item lines="none">
-            <ion-icon
-              name="information-circle-outline"
-              slot="start"
-              [color]="reservaEncontrada.estado == 'confirmada' ? 'success' : (reservaEncontrada.estado == 'hospedado' ? 'primary' : 'medium')"
-            ></ion-icon>
-
-            <ion-label>
-              <h3>Estado Actual</h3>
-              <ion-badge
-                [color]="reservaEncontrada.estado == 'confirmada' ? 'success' : (reservaEncontrada.estado == 'hospedado' ? 'primary' : 'medium')"
-              >
-                {{ reservaEncontrada.estado | uppercase }}
-              </ion-badge>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-
-        <div class="btn-stack">
-          <ion-button
-            *ngIf="reservaEncontrada.estado == 'confirmada'"
-            expand="block"
-            color="success"
-            class="big-btn"
-            (click)="procesarCheckIn()"
-          >
-            <ion-icon name="key-outline" slot="start"></ion-icon>
-            REALIZAR CHECK-IN
-          </ion-button>
-
-          <ion-button
-            *ngIf="reservaEncontrada.estado == 'hospedado'"
-            expand="block"
-            color="warning"
-            class="big-btn"
-            (click)="procesarCheckOut()"
-          >
-            <ion-icon name="log-out-outline" slot="start"></ion-icon>
-            REALIZAR CHECK-OUT
-          </ion-button>
-
-          <p *ngIf="reservaEncontrada.estado == 'finalizado'" class="muted center">
-            Esta reserva ya ha finalizado.
-          </p>
-
-          <ion-button fill="clear" color="medium" expand="block" (click)="reservaEncontrada = null">
-            Cerrar Búsqueda
-          </ion-button>
-        </div>
-
-      </ion-card-content>
-    </ion-card>
-
-    <div class="subhead-row">
-      <h3 class="subhead">
-        <ion-icon name="people-outline"></ion-icon>
-        Huéspedes en Casa
-        <span class="pill">{{ listaHuespedes.length }}</span>
-      </h3>
-    </div>
-
-    <div *ngIf="listaHuespedes.length === 0" class="empty-state">
-      <ion-icon name="moon-outline"></ion-icon>
-      <p>No hay huéspedes activos en este momento.</p>
-    </div>
-
-    <ion-list class="list-soft glass-list">
-      <ion-item-sliding *ngFor="let h of listaHuespedes">
+    <ion-card-content>
+      <ion-list class="list-clean" lines="none">
         <ion-item lines="none">
-          <div class="room-chip" slot="start">{{ h.numero }}</div>
+          <ion-icon name="bed-outline" slot="start" color="secondary"></ion-icon>
+          <ion-label>
+            <h3>Habitación {{ reservaEncontrada.numero }}</h3>
+            <p>{{ reservaEncontrada.tipo }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Estancia</h3>
+            <p>{{ reservaEncontrada.fecha_checkin }} al {{ reservaEncontrada.fecha_checkout }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-icon
+            name="information-circle-outline"
+            slot="start"
+            [color]="reservaEncontrada.estado == 'confirmada' ? 'success' : (reservaEncontrada.estado == 'hospedado' ? 'primary' : 'medium')"
+          ></ion-icon>
 
           <ion-label>
-            <h2 class="item-title">{{ h.cliente }}</h2>
-            <p class="item-sub">Salida prevista: {{ h.fecha_checkout }}</p>
+            <h3>Estado Actual</h3>
+            <ion-badge
+              [color]="reservaEncontrada.estado == 'confirmada' ? 'success' : (reservaEncontrada.estado == 'hospedado' ? 'primary' : 'medium')"
+            >
+              {{ reservaEncontrada.estado | uppercase }}
+            </ion-badge>
           </ion-label>
-
-          <ion-button slot="end" color="warning" size="small" class="pill-btn" (click)="procesarCheckOut(h.id)">
-            <ion-icon name="log-out-outline" slot="start"></ion-icon>
-            SALIDA
-          </ion-button>
         </ion-item>
+      </ion-list>
 
-        <ion-item-options side="end">
-          <ion-item-option color="warning" (click)="procesarCheckOut(h.id)">
-            Check-Out
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-list>
+      <div class="btn-stack">
+        <ion-button
+          *ngIf="reservaEncontrada.estado == 'confirmada'"
+          expand="block"
+          color="success"
+          class="big-btn"
+          (click)="procesarCheckIn()"
+        >
+          <ion-icon name="key-outline" slot="start"></ion-icon>
+          REALIZAR CHECK-IN
+        </ion-button>
 
-  </section>
+        <!-- ✅ NUEVO: en vez de checkout directo, ir a facturar -->
+        <ion-button
+          *ngIf="reservaEncontrada.estado == 'hospedado'"
+          expand="block"
+          color="warning"
+          class="big-btn"
+          (click)="irAFacturarCheckout()"
+        >
+          <ion-icon name="receipt-outline" slot="start"></ion-icon>
+          FACTURAR Y CHECK-OUT
+        </ion-button>
+
+        <p *ngIf="reservaEncontrada.estado == 'finalizado'" class="muted center">
+          Esta reserva ya ha finalizado.
+        </p>
+
+        <ion-button fill="clear" color="medium" expand="block" (click)="limpiarRecepcion()">
+          Cerrar Búsqueda
+        </ion-button>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <div class="subhead-row">
+    <h3 class="subhead">
+      <ion-icon name="people-outline"></ion-icon>
+      Huéspedes en Casa
+      <span class="pill">{{ listaHuespedes.length }}</span>
+    </h3>
+  </div>
+
+  <div *ngIf="listaHuespedes.length === 0" class="empty-state">
+    <ion-icon name="moon-outline"></ion-icon>
+    <p>No hay huéspedes activos en este momento.</p>
+  </div>
+
+  <ion-list class="list-soft glass-list">
+    <ion-item-sliding *ngFor="let h of listaHuespedes">
+      <ion-item lines="none">
+        <div class="room-chip" slot="start">{{ h.numero }}</div>
+
+        <ion-label>
+          <h2 class="item-title">{{ h.cliente }}</h2>
+          <p class="item-sub">Salida prevista: {{ h.fecha_checkout }}</p>
+        </ion-label>
+
+        <!-- ✅ FIX: aquí SÍ debe ir h.id -->
+        <ion-button
+          slot="end"
+          color="warning"
+          size="small"
+          class="pill-btn"
+          (click)="irAFacturarCheckout(h.id)"
+        >
+          <ion-icon name="receipt-outline" slot="start"></ion-icon>
+          SALIDA
+        </ion-button>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <!-- ✅ recomendado: facturar -->
+        <ion-item-option color="warning" (click)="irAFacturarCheckout(h.id)">
+          Facturar
+        </ion-item-option>
+
+        <!-- opcional: mantener checkout directo (si quieres) -->
+        <ion-item-option color="medium" (click)="procesarCheckOut(h.id)">
+          Check-Out directo
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+</section>
 
   <!-- ===================== RESERVAS ===================== -->
   <section *ngIf="seccion === 'reservas'" class="section-wrap">
@@ -450,25 +472,34 @@
 
   </section>
 
-  <!-- ===================== INVENTARIO ===================== -->
+   <!-- ===================== INVENTARIO ===================== -->
   <section *ngIf="seccion === 'habitaciones'" class="section-wrap">
 
     <div class="section-head">
       <div>
         <h2 class="section-title">Inventario</h2>
-        <p class="section-hint">Gestiona habitaciones y ofertas</p>
+        <p class="section-hint">Gestiona habitaciones, capacidad y ofertas</p>
       </div>
     </div>
 
-    <ion-button expand="block" color="secondary" class="big-btn soft-btn" (click)="mostrarFormulario = !mostrarFormulario">
-      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-      {{ mostrarFormulario ? 'Cancelar' : 'Nueva Habitación' }}
+    <ion-button
+      expand="block"
+      color="secondary"
+      class="big-btn soft-btn"
+      (click)="toggleFormularioHabitacion()"
+    >
+      <ion-icon [name]="mostrarFormulario ? 'close-circle-outline' : 'add-circle-outline'" slot="start"></ion-icon>
+      {{ mostrarFormulario ? (editHabitacionId ? 'Cancelar edición' : 'Cancelar') : 'Nueva Habitación' }}
     </ion-button>
 
     <ion-card *ngIf="mostrarFormulario" class="card-soft glass-card form-card">
       <ion-card-header>
-        <ion-card-title>Agregar al Inventario</ion-card-title>
-        <ion-card-subtitle>Completa los datos básicos</ion-card-subtitle>
+        <ion-card-title>
+          {{ editHabitacionId ? 'Editar Habitación' : 'Agregar al Inventario' }}
+        </ion-card-title>
+        <ion-card-subtitle>
+          {{ editHabitacionId ? 'Actualiza los datos y guarda cambios' : 'Completa los datos básicos' }}
+        </ion-card-subtitle>
       </ion-card-header>
 
       <ion-card-content>
@@ -497,9 +528,50 @@
           <ion-textarea [(ngModel)]="nuevaHab.descripcion"></ion-textarea>
         </ion-item>
 
+        <!-- ✅ NUEVO: CAPACIDAD (Booking / Admin pro) -->
+        <div class="divider-soft"></div>
+
+        <div class="subhead-row" style="margin-top:10px;">
+          <h3 class="subhead">
+            <ion-icon name="people-outline"></ion-icon>
+            Capacidad / Huéspedes
+          </h3>
+        </div>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Máx. huéspedes (total)</ion-label>
+          <ion-input type="number" [(ngModel)]="nuevaHab.max_personas"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Máx. adultos</ion-label>
+          <ion-input type="number" [(ngModel)]="nuevaHab.max_adultos"></ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-label position="stacked">Máx. niños</ion-label>
+          <ion-input type="number" [(ngModel)]="nuevaHab.max_ninos"></ion-input>
+        </ion-item>
+
+        <ion-note *ngIf="nuevaHab?.max_personas">
+          Capacidad configurada: {{ nuevaHab.max_personas }} (Adultos: {{ nuevaHab.max_adultos }}, Niños: {{ nuevaHab.max_ninos }})
+        </ion-note>
+
         <ion-button expand="block" class="big-btn" (click)="guardarHabitacion()">
-          Guardar Habitación
+          <ion-icon [name]="editHabitacionId ? 'save-outline' : 'checkmark-circle-outline'" slot="start"></ion-icon>
+          {{ editHabitacionId ? 'Actualizar Habitación' : 'Guardar Habitación' }}
         </ion-button>
+
+        <ion-button
+          *ngIf="editHabitacionId"
+          expand="block"
+          fill="clear"
+          color="medium"
+          (click)="cancelarEdicionHabitacion()"
+        >
+          Cancelar edición
+        </ion-button>
+
       </ion-card-content>
     </ion-card>
 
@@ -518,6 +590,7 @@
 
     <ion-list class="list-soft glass-list">
       <ion-item-sliding *ngFor="let h of listaHabitaciones">
+
         <ion-item lines="none">
           <ion-thumbnail slot="start" class="thumb-pro">
             <img [src]="h.imagen_url" class="thumb-img">
@@ -534,6 +607,11 @@
 
             <div class="room-sub">{{ h.tipo }}</div>
 
+            <!-- ✅ NUEVO: muestra capacidad si existe -->
+            <div class="room-sub" *ngIf="h.max_personas">
+              Capacidad: {{ h.max_personas }} (A: {{ h.max_adultos || 0 }} / N: {{ h.max_ninos || 0 }})
+            </div>
+
             <div class="price-row">
               <span *ngIf="h.descuento > 0" class="price-old">
                 ${{ h.precio }}
@@ -544,6 +622,11 @@
               </span>
             </div>
           </ion-label>
+
+          <!-- ✅ NUEVO: editar (sin romper oferta) -->
+          <ion-button slot="end" fill="clear" class="icon-round" (click)="editarHabitacion(h)">
+            <ion-icon name="create-outline" color="primary" slot="icon-only"></ion-icon>
+          </ion-button>
 
           <ion-button slot="end" fill="clear" class="icon-round" (click)="ponerOferta(h)">
             <ion-icon name="pricetag-outline" color="warning" slot="icon-only"></ion-icon>
@@ -556,10 +639,12 @@
             Eliminar
           </ion-item-option>
         </ion-item-options>
+
       </ion-item-sliding>
     </ion-list>
 
   </section>
+
 
   <!-- ===================== MARKETING ===================== -->
   <section *ngIf="seccion === 'marketing'" class="section-wrap">

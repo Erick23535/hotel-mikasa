@@ -1,0 +1,18 @@
+[
+  {
+    "q": "¿Qué hace la app?",
+    "a": "Hotel Mi Kasa te permite ver habitaciones, buscar disponibilidad por fechas, reservar, ver tus reservas, recibir notificaciones y guardar favoritos."
+  },
+  {
+    "q": "¿Cómo reservo?",
+    "a": "En Home elige fechas y huéspedes, abre una habitación y toca Reservar. Si no has iniciado sesión, la app te pedirá login."
+  },
+  {
+    "q": "¿A qué hora es el check-in y check-out?",
+    "a": "Check-in normalmente desde la tarde y check-out en la mañana. Si necesitas horarios exactos, consulta a recepción o revisa el detalle del hotel en la app."
+  },
+  {
+    "q": "¿Cómo uso un cupón?",
+    "a": "En el detalle de la habitación, escribe el código del cupón y presiona Aplicar. Si es válido, verás el descuento reflejado en el total."
+  }
+]

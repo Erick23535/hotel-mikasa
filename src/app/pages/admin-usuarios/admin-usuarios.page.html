@@ -1,0 +1,149 @@
+<ion-header class="au-header" translucent="true">
+  <ion-toolbar>
+    <ion-title>Usuarios y roles</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="au-content">
+  <!-- Fondo premium -->
+  <div class="au-bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+  </div>
+
+  <div class="au-wrap ion-padding">
+    <!-- Hero -->
+    <section class="au-hero">
+      <div class="au-hero__left">
+        <div class="au-chip">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Administración</span>
+        </div>
+        <h1 class="au-title">Gestión de usuarios</h1>
+        <p class="au-sub">
+          Lista usuarios y asigna roles de forma segura.
+        </p>
+      </div>
+
+      <div class="au-hero__right">
+        <div class="au-stat">
+          <div class="au-stat__label">Total</div>
+          <div class="au-stat__value">{{ users?.length || 0 }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card: filtros -->
+    <section class="au-card">
+      <div class="au-card__head">
+        <div class="au-card__title">
+          <ion-icon name="search-outline"></ion-icon>
+          <span>Buscar y cargar</span>
+        </div>
+
+        <ion-button class="au-btn" (click)="loadUsers()" [disabled]="isLoading" expand="block">
+          <ion-spinner *ngIf="isLoading" name="crescent" class="me-2"></ion-spinner>
+          Cargar usuarios
+        </ion-button>
+      </div>
+
+      <div class="au-form">
+        <ion-item class="au-item" lines="none">
+          <ion-icon name="search-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Buscar</ion-label>
+          <ion-input [(ngModel)]="q" placeholder="nombre o correo"></ion-input>
+        </ion-item>
+
+        <ion-item class="au-item" lines="none">
+          <ion-icon name="key-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Admin Key</ion-label>
+          <ion-input
+            [(ngModel)]="adminKey"
+            placeholder="MIKASA_ADMIN_2026"
+            type="password"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="au-hint">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <span>Tip: La Admin Key evita cambios accidentales.</span>
+      </div>
+    </section>
+
+    <!-- Card: listado -->
+    <section class="au-card" *ngIf="users?.length">
+      <div class="au-card__head au-card__head--tight">
+        <div class="au-card__title">
+          <ion-icon name="list-outline"></ion-icon>
+          <span>Resultados</span>
+        </div>
+
+        <div class="au-pill">
+          Mostrando: <b>{{ filteredUsers().length }}</b>
+        </div>
+      </div>
+
+      <ion-list class="au-list">
+        <ion-item class="au-user" lines="none" *ngFor="let u of filteredUsers()">
+          <div class="au-user__avatar" aria-hidden="true">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </div>
+
+          <ion-label class="au-user__label">
+            <h2 class="au-user__name">
+              {{u.nombre}}
+              <small class="au-user__email">({{u.email}})</small>
+            </h2>
+            <p class="au-user__meta">
+              Rol actual: <b class="au-role">{{u.rol}}</b>
+            </p>
+          </ion-label>
+
+          <ion-select
+            class="au-select"
+            interface="popover"
+            [(ngModel)]="u.rol"
+            placeholder="Rol"
+          >
+            <ion-select-option value="cliente">cliente</ion-select-option>
+            <ion-select-option value="admin">admin</ion-select-option>
+            <ion-select-option value="gerente">gerente</ion-select-option>
+            <ion-select-option value="recepcion">recepcion</ion-select-option>
+            <ion-select-option value="bodega">bodega</ion-select-option>
+          </ion-select>
+
+          <ion-button
+            class="au-save"
+            slot="end"
+            size="small"
+            fill="outline"
+            (click)="saveRole(u)"
+            [disabled]="isSavingId === toNum(u.id)"
+          >
+            <ion-spinner *ngIf="isSavingId === toNum(u.id)" name="dots" class="me-1"></ion-spinner>
+            Guardar
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </section>
+
+    <!-- Empty state -->
+    <section class="au-empty au-card" *ngIf="!users?.length">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <div>
+        <h3>Sin datos aún</h3>
+        <p>Ingresa tu Admin Key y presiona “Cargar usuarios”.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast -->
+  <ion-toast
+    [isOpen]="toastOpen"
+    [message]="toastMsg"
+    duration="2200"
+    (didDismiss)="toastOpen=false"
+  ></ion-toast>
+</ion-content>

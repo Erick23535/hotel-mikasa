@@ -1,0 +1,36 @@
+.ai-fab {
+  --background: #0b1220;
+  --color: #ffffff;
+  --box-shadow: 0 14px 40px rgba(0,0,0,.28);
+  position: relative;
+}
+
+.ai-svg{
+  width: 22px;
+  height: 22px;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.25));
+}
+
+/* puntito */
+.ai-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #22c55e;
+  border: 2px solid #0b1220;
+}
+
+/* pulso */
+.ai-pulse {
+  animation: aiPulse 2.3s ease-in-out infinite;
+}
+@keyframes aiPulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(34,197,94,.35); }
+  65%  { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(34,197,94,0); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}

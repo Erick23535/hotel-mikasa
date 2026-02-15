@@ -1,0 +1,91 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Facturación</ion-title>
+    <ion-buttons slot="end">
+    <ion-button (click)="irRecepcion()">
+  Volver a Recepción
+</ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card class="card-soft">
+    <ion-card-header>
+      <ion-card-title>Factura</ion-card-title>
+      <ion-card-subtitle>N° {{ numeroFactura }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content *ngIf="reserva">
+      <ion-item lines="none">
+        <ion-label>
+          <h2><b>{{ reserva.cliente }}</b></h2>
+          <p>Habitación {{ reserva.numero }} • {{ reserva.tipo }}</p>
+          <p>{{ reserva.fecha_checkin }} → {{ reserva.fecha_checkout }}</p>
+          <p><b>Total reserva:</b> ${{ reserva.total }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="card-soft">
+    <ion-card-header>
+      <ion-card-title>Datos del Hotel</ion-card-title>
+      <ion-card-subtitle>Se guardan para futuras facturas</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="empresa.nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">RUC</ion-label>
+        <ion-input [(ngModel)]="empresa.ruc"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Dirección</ion-label>
+        <ion-input [(ngModel)]="empresa.direccion"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Teléfono</ion-label>
+        <ion-input [(ngModel)]="empresa.telefono"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input [(ngModel)]="empresa.email"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" fill="outline" (click)="guardarEmpresaLocal()">
+        Guardar datos del Hotel
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="card-soft">
+    <ion-card-header>
+      <ion-card-title>Impuestos y notas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">IVA (%)</ion-label>
+        <ion-input type="number" [(ngModel)]="ivaPct"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Observaciones</ion-label>
+        <ion-textarea rows="3" [(ngModel)]="observaciones"></ion-textarea>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" [disabled]="loading" (click)="generarPdf()">
+    Generar PDF (Corporativo)
+  </ion-button>
+
+  <ion-button expand="block" color="warning" [disabled]="loading || !pdfGenerado" (click)="confirmarCheckout()">
+    Confirmar Salida (Check-out)
+  </ion-button>
+
+</ion-content>

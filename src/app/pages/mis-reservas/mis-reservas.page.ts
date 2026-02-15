@@ -3,6 +3,10 @@ import { Api } from 'src/app/services/api';
 import { NavController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthGateService } from 'src/app/services/auth-gate.service';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -224,6 +228,109 @@ export class MisReservasPage {
       }
     });
   }
+async abrirFactura(url: string) {
+  if (!url) return;
+
+  const finalUrl = this.resolveApiUrl(url);
+
+  try {
+    await Browser.open({ url: finalUrl });
+  } catch {
+    window.open(finalUrl, '_blank');
+  }
+}
+
+private async ensureFacturasDir() {
+  try {
+    await Filesystem.mkdir({
+      path: 'facturas',
+      directory: Directory.Documents,
+      recursive: true
+    });
+  } catch {
+    // ya existe
+  }
+}
+
+private blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.readAsDataURL(blob);
+  });
+}
+async descargarFactura(r: any) {
+  const url = this.resolveApiUrl(r?.factura_url); // ✅ AQUÍ
+  if (!url) {
+    this.mostrarMensaje('Aún no hay factura disponible.');
+    return;
+  }
+
+  try {
+    this.mostrarMensaje('Descargando factura...');
+
+    // ✅ En WEB (ionic serve) mejor descargar directo
+    if (Capacitor.getPlatform() === 'web') {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('No se pudo descargar la factura.');
+      const blob = await resp.blob();
+
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = `Factura_R${r?.id || '0'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+
+      this.mostrarMensaje('Factura descargada.');
+      return;
+    }
+
+    // ✅ En dispositivo: bajar -> base64 -> guardar en Documents/facturas
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('No se pudo descargar la factura.');
+
+    const blob = await resp.blob();
+    const dataUrl = await this.blobToBase64(blob);
+    const base64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
+
+    await this.ensureFacturasDir();
+
+    const fileName = `Factura_R${r?.id || '0'}_${Date.now()}.pdf`;
+    const path = `facturas/${fileName}`;
+
+    await Filesystem.writeFile({
+      path,
+      data: base64,
+      directory: Directory.Documents
+    });
+
+    const uriRes = await Filesystem.getUri({
+      path,
+      directory: Directory.Documents
+    });
+
+    this.mostrarMensaje('Factura guardada en Documentos.');
+
+    // ✅ Abre/Comparte (sirve como “abrir” y también “descargar” real)
+    await Share.share({
+      title: 'Factura Hotel Mi Kasa',
+      text: `Factura de la reserva #${r?.id}`,
+      url: uriRes.uri,
+      dialogTitle: 'Abrir / Compartir factura'
+    });
+
+  } catch (err: any) {
+    console.error('Error descargando factura:', err);
+
+    // ⚠️ Si falla por CORS o servidor, al menos ábrela (el usuario la descarga desde el navegador)
+    this.mostrarMensaje('No pude guardarla, abriendo en el navegador...');
+    await this.abrirFactura(url);
+  }
+}
 
   // ----------------------------
   // PDF PREMIUM (pdfMake)
@@ -404,6 +511,22 @@ export class MisReservasPage {
       alert("Error al generar PDF: " + (err?.message || err));
     }
   }
+private resolveApiUrl(u: string): string {
+  if (!u) return u;
+
+  const base = (this.api as any)?.url || 'http://localhost/api-hotel';
+  const cleanBase = base.replace(/\/+$/, ''); // sin slash final
+
+  // Si viene absoluta
+  if (/^https?:\/\//i.test(u)) {
+    // Reemplaza solo si viene con localhost/api-hotel
+    return u.replace(/^https?:\/\/localhost\/api-hotel/i, cleanBase);
+  }
+
+  // Si viene relativa tipo uploads/...
+  const clean = u.replace(/^\/+/, '');
+  return `${cleanBase}/${clean}`;
+}
 
   async mostrarMensaje(msj: string) {
     const t = await this.toast.create({ message: msj, duration: 2000 });

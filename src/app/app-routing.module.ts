@@ -40,6 +40,22 @@ const routes: Routes = [
     path: 'favoritos',
     loadChildren: () => import('./favoritos/favoritos.module').then( m => m.FavoritosPageModule)
   },
+  {
+    path: 'factura-checkout',
+    loadChildren: () => import('./pages/factura-checkout/factura-checkout.module').then( m => m.FacturaCheckoutPageModule)
+  },
+  {
+    path: 'assistant-chat',
+    loadChildren: () => import('./pages/assistant-chat/assistant-chat.module').then( m => m.AssistantChatPageModule)
+  },
+  {
+    path: 'assistant-faq-admin',
+    loadChildren: () => import('./pages/assistant-faq-admin/assistant-faq-admin.module').then( m => m.AssistantFaqAdminPageModule)
+  },
+  {
+    path: 'admin-usuarios',
+    loadChildren: () => import('./pages/admin-usuarios/admin-usuarios.module').then( m => m.AdminUsuariosPageModule)
+  },
 ];
 
 @NgModule({
