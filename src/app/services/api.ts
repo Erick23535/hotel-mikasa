@@ -6,11 +6,10 @@ import { Capacitor } from '@capacitor/core';
 export class Api {
 
   private readonly WEB_URL = 'http://localhost/api-hotel';
-  private readonly LAN_URL = 'http://192.168.0.10/api-hotel';
+  private readonly LAN_URL = 'http://192.168.1.10/api-hotel';
 
-  // ✅ Base URL final (web/android/ios)
-  readonly baseUrl: string = this.getBaseUrl(); // ✅ FIX: ahora existe baseUrl
-  readonly url: string = this.baseUrl;          // ✅ mantiene tu "url" como siempre
+  readonly baseUrl: string = this.getBaseUrl(); 
+  readonly url: string = this.baseUrl;          
 
   private jsonHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
 
@@ -18,14 +17,12 @@ export class Api {
 
   private getBaseUrl(): string {
     try {
-      const platform = Capacitor.getPlatform(); // 'web' | 'android' | 'ios'
+      const platform = Capacitor.getPlatform(); 
 
-      // ✅ En Android/iOS usa LAN
+      
       if (platform !== 'web') return this.LAN_URL;
 
-      // ✅ En web:
-      // - Si estás en localhost => API local
-      // - Si NO estás en localhost (ej: abres desde celular/otra PC) => usa LAN
+    
       const host =
         (typeof window !== 'undefined' && window.location && window.location.hostname)
           ? window.location.hostname

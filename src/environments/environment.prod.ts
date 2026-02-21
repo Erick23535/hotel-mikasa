@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-    apiUrl: 'http://192.168.0.10/api-hotel'
+    apiUrl: 'http://192.168.1.10/api-hotel'
 
 };

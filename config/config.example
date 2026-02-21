@@ -1,0 +1,13 @@
+# Configuración del Servidor Local (XAMPP)
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=hotel_mi_kasa
+DB_USER=usuario_ejemplo
+DB_PASS=password_ejemplo
+
+# Configuración del Backend
+SERVER_PORT=8080
+API_VERSION=v1
+
+# Configuración de Notificaciones
+EMAIL_SERVER=smtp.gmail.com

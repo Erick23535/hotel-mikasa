@@ -13,7 +13,6 @@ import { AuthGateService } from 'src/app/services/auth-gate.service';
 export class LoginPage {
   credenciales = { email: '', password: '' };
 
-  // Solo para UI: mostrar “Volver” si hay retorno guardado
   returnUrl: string | null = null;
 
   // =========================
