@@ -22,3 +22,4 @@ Configuración: Plantilla config para la conexión al servidor local XAMPP y ent
 - **Generación de Comprobantes:** Integración de la librería `pdfMake` para generar PDFs automáticos.
 - **Validación QR:** Sistema de pases digitales para agilizar el check-in en el hotel.
 - **Gestión de Archivos:** Funcionalidad para descargar facturas y compartir comprobantes mediante Capacitor.
+*Integración visual de la metodología GitFlow para auditoría funcional.
